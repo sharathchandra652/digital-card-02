@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AERO VILLAS - Premium Location Highlights Presentation</title>
+
+  <!-- Leaflet CSS & JS for smooth interactive custom styled satellite map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Google Fonts: Cinzel & Plus Jakarta Sans for luxury real estate presentation -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome for crisp luxury icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    :root {
+      --font-heading: 'Cinzel', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --gold-primary: #D4AF37;
+      --gold-light: #F3E5AB;
+      --gold-gradient: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA7C11 100%);
+      --dark-overlay: rgba(15, 12, 29, 0.85);
+      --glass-bg: rgba(22, 18, 42, 0.82);
+      --glass-border: rgba(212, 175, 55, 0.3);
+      --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.65);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body,
+    html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font-body);
+      background-color: #0b0914;
+      color: #ffffff;
+    }
+
+    /* BACKGROUND LAYER WITH PRESERVED Pattern.webp OVERLAY */
+    .app-background-texture {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('Pattern.webp');
+      background-repeat: repeat;
+      background-size: 300px 300px;
+      opacity: 0.18;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* SCREEN 1: DIGITAL CARD FRONT LANDING PAGE (Exact Pattern.webp Background) */
+    .portal-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-image: url('Pattern.webp');
+      background-repeat: repeat;
+      background-size: 300px 300px;
+      overflow-y: auto;
+      padding: 24px 16px;
+      transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), transform 0.8s ease;
+    }
+
+    .portal-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(1.05);
+    }
+
+    .digital-card-container {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+    }
+
+    /* DIGITAL CARD HEADER */
+    .card-brand-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-brand-title {
+      font-family: var(--font-heading);
+      font-size: 3.4rem;
+      letter-spacing: 8px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 4px;
+      text-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-brand-subtitle {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      letter-spacing: 12px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 18px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-tagline {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .tagline-line {
+      height: 1.5px;
+      flex-grow: 1;
+      background: rgba(255, 204, 0, 0.8);
+    }
+
+    .tagline-text {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #FFCC00;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    /* LOCATION HIGHLIGHTS TRIGGER CARD */
+    .trigger-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 35px 55px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: var(--glass-shadow);
+      transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trigger-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+      transition: left 0.75s ease;
+    }
+
+    .trigger-card:hover::before {
+      left: 100%;
+    }
+
+    .trigger-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      border-color: rgba(212, 175, 55, 0.85);
+      box-shadow: 0 18px 45px rgba(212, 175, 55, 0.3);
+    }
+
+    .location-icon-wrapper {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .location-icon-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 4px 12px rgba(212, 175, 55, 0.45));
+    }
+
+    .trigger-label {
+      font-family: var(--font-body);
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      color: #ffffff;
+      margin-top: 10px;
+    }
+
+    /* SCREEN 2: CINEMATIC OPENING PAGE (3-Second Reveal) */
+    .cinematic-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(to bottom, rgba(11, 9, 20, 0.7), rgba(11, 9, 20, 0.88));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .cinematic-bg-media {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.02);
+      animation: slowCinematicZoom 12s infinite alternate ease-in-out;
+      z-index: -2;
+      filter: brightness(0.68) contrast(1.12);
+    }
+
+    @keyframes slowCinematicZoom {
+      0% {
+        transform: scale(1.0);
+      }
+
+      100% {
+        transform: scale(1.12);
+      }
+    }
+
+    .cinematic-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .cinematic-content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeInUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .cinematic-title {
+      font-family: var(--font-heading);
+      font-size: 3.8rem;
+      letter-spacing: 14px;
+      font-weight: 700;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 25px;
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    }
+
+    .cinematic-welcome {
+      font-size: 1.8rem;
+      font-weight: 300;
+      letter-spacing: 4px;
+      color: #e0dede;
+      margin-top: 15px;
+    }
+
+    .cinematic-subtitle {
+      font-size: 1.1rem;
+      font-weight: 400;
+      letter-spacing: 3px;
+      color: var(--gold-light);
+      margin-top: 12px;
+      opacity: 0.95;
+      font-style: italic;
+    }
+
+    .cinematic-progress-bar {
+      width: 220px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.15);
+      margin-top: 40px;
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cinematic-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--gold-gradient);
+      transition: width 3s linear;
+    }
+
+    /* SCREEN 3: MAIN LUXURY LOCATION INTERFACE */
+    .map-interface-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .map-interface-screen.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* MAP CONTAINER */
+    #leaflet-map {
+      width: 100%;
+      height: 100%;
+      background-color: #0d1117;
+      z-index: 1;
+    }
+
+    /* TOP HEADER BAR OVER MAP */
+    .map-header-bar {
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      z-index: 100;
+      background: rgba(22, 18, 42, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      padding: 8px 18px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+      pointer-events: auto;
+    }
+
+    .map-header-logo {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      letter-spacing: 5px;
+      font-weight: 700;
+      color: var(--gold-light);
+      text-align: center;
+      line-height: 1.35;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* LEFT SIDE VERTICAL NAVIGATION PANEL (GLASSMORPHISM) */
+    .nav-panel {
+      position: absolute;
+      top: 54%;
+      left: 25px;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      padding: 16px 12px;
+      border-radius: 24px;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .nav-item {
+      position: relative;
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid transparent;
+    }
+
+    .nav-item i {
+      font-size: 1.25rem;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.18);
+      border-color: var(--gold-primary);
+      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.25);
+    }
+
+    .nav-item:hover i,
+    .nav-item.active i {
+      transform: scale(1.15);
+    }
+
+    /* HOVER TOOLTIP / LABEL REVEAL */
+    .nav-item .nav-label {
+      position: absolute;
+      left: 70px;
+      white-space: nowrap;
+      background: rgba(15, 12, 29, 0.94);
+      border: 1px solid var(--gold-primary);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .nav-item:hover .nav-label {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* FLOATING CATEGORY DETAIL PANEL (RIGHT SIDE PRESENTATION CARD) */
+    .category-card-panel {
+      position: absolute;
+      top: 100px;
+      right: 30px;
+      width: 420px;
+      max-height: calc(100vh - 140px);
+      z-index: 100;
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--glass-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      transform: translateX(470px);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .category-card-panel.open {
+      transform: translateX(0);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      padding-bottom: 14px;
+    }
+
+    .panel-title {
+      font-family: var(--font-heading);
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-close {
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.6);
+      transition: color 0.2s;
+    }
+
+    .panel-close:hover {
+      color: var(--gold-light);
+    }
+
+    .location-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .location-item-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .location-item-card:hover,
+    .location-item-card.expanded {
+      background: rgba(212, 175, 55, 0.12);
+      border-color: rgba(212, 175, 55, 0.5);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .loc-card-header {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .loc-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid var(--gold-primary);
+      flex-shrink: 0;
+    }
+
+    .loc-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      min-width: 0;
+      padding-right: 6px;
+    }
+
+    .loc-name {
+      font-size: 0.94rem;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.3;
+      word-wrap: break-word;
+    }
+
+    .loc-badge-inline {
+      display: inline-block;
+      align-self: flex-start;
+      background: rgba(212, 175, 55, 0.2);
+      border: 1px solid var(--gold-primary);
+      color: var(--gold-light);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .loc-card-toggle {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .loc-card-toggle:hover {
+      background: rgba(212, 175, 55, 0.25);
+      color: var(--gold-light);
+    }
+
+    .location-item-card.expanded .loc-card-toggle i {
+      transform: rotate(180deg);
+    }
+
+    .loc-card-expanded {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      background: rgba(15, 12, 29, 0.6);
+      border-top: 0px solid transparent;
+    }
+
+    .location-item-card.expanded .loc-card-expanded {
+      max-height: 380px;
+      border-top: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .loc-expanded-inner {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .loc-expanded-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid rgba(212, 175, 55, 0.4);
+    }
+
+    .loc-expanded-desc {
+      font-size: 0.82rem;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.45;
+    }
+
+    .loc-expanded-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .loc-expanded-maps-btn {
+      background: var(--gold-gradient);
+      color: #0b0914;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s ease;
+    }
+
+    .loc-expanded-maps-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .loc-expanded-close-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .loc-expanded-close-btn:hover {
+      background: rgba(255, 0, 85, 0.25);
+      border-color: rgba(255, 0, 85, 0.6);
+      color: #ff4d6d;
+    }
+
+    /* DETAILED LOCATION EXPLORER CARD / MODAL */
+    .location-modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 500;
+      background: rgba(10, 8, 20, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .location-modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .location-modal-card {
+      width: 90%;
+      max-width: 520px;
+      background: rgba(18, 14, 34, 0.95);
+      border: 1px solid var(--gold-primary);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+      transform: scale(0.92) translateY(20px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .location-modal-backdrop.active .location-modal-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-image-container {
+      width: 100%;
+      height: 260px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 6s ease-out;
+    }
+
+    .location-modal-backdrop.active .modal-image {
+      transform: scale(1.08);
+    }
+
+    .modal-badge-overlay {
+      position: absolute;
+      bottom: 16px;
+      left: 20px;
+      background: rgba(15, 12, 29, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--gold-primary);
+      color: var(--gold-light);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(15, 12, 29, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      z-index: 10;
+    }
+
+    .modal-close-btn:hover {
+      background: var(--gold-primary);
+      color: #0b0914;
+      border-color: var(--gold-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .modal-title {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      color: var(--gold-light);
+      letter-spacing: 1px;
+      line-height: 1.3;
+    }
+
+    .modal-description {
+      font-size: 0.92rem;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.55;
+    }
+
+    .modal-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      padding: 12px 18px;
+      border-radius: 14px;
+      margin-top: 4px;
+    }
+
+    .modal-distance {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .modal-distance-label {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.55);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .modal-distance-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .modal-maps-btn {
+      background: var(--gold-gradient);
+      color: #0b0914;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .modal-maps-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5);
+    }
+
+    /* CUSTOM MAP MARKERS & POPUPS */
+    .aero-hub-marker {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      background: radial-gradient(circle, #f3e5ab 0%, #d4af37 60%, #aa7c11 100%);
+      border: 3px solid #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulseAero 2s infinite alternate;
+    }
+
+    @keyframes pulseAero {
+      0% {
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+        transform: scale(1);
+      }
+
+      100% {
+        box-shadow: 0 0 35px rgba(212, 175, 55, 1);
+        transform: scale(1.1);
+      }
+    }
+
+    .aero-hub-marker i {
+      color: #0b0914;
+      font-size: 1.3rem;
+    }
+
+    /* LUXURY WHITE + GOLD ROUNDED PIN CARD MARKER (MATCHING USER REFERENCE IMAGE) */
+    .custom-location-pin-card {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.65));
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .custom-location-pin-card:hover {
+      transform: scale(1.12) translateY(-6px);
+      z-index: 1000 !important;
+    }
+
+    .pin-card-box {
+      background: #FFFFFF;
+      color: #111111;
+      padding: 10px 18px;
+      border-radius: 18px;
+      font-family: var(--font-body);
+      font-weight: 800;
+      font-size: 0.82rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 1.25;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      white-space: normal;
+      max-width: 220px;
+    }
+
+    .pin-card-pointer {
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 14px solid #D4AF37;
+      margin-top: -1px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+
+    .pin-card-dot {
+      width: 14px;
+      height: 14px;
+      background: #E63946;
+      border: 3px solid #FFFFFF;
+      border-radius: 50%;
+      margin-top: -5px;
+      box-shadow: 0 0 10px rgba(230, 57, 70, 0.8);
+    }
+
+    /* LEAFLET OVERRIDES */
+    .leaflet-popup-content-wrapper {
+      background: rgba(15, 12, 29, 0.95) !important;
+      backdrop-filter: blur(12px) !important;
+      border: 1px solid var(--gold-primary) !important;
+      color: #fff !important;
+      border-radius: 14px !important;
+      padding: 6px !important;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .leaflet-popup-tip {
+      background: rgba(15, 12, 29, 0.95) !important;
+      border: 1px solid var(--gold-primary) !important;
+    }
+
+    .popup-title {
+      font-family: var(--font-heading);
+      color: var(--gold-light);
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .popup-dist {
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* CUSTOM CONTROLS OVERLAY */
+    .map-controls {
+      position: absolute;
+      bottom: 30px;
+      right: 30px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .map-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .map-btn:hover {
+      background: rgba(212, 175, 55, 0.2);
+      border-color: var(--gold-primary);
+      transform: scale(1.05);
+    }
+
+    /* RESET CENTER BUTTON */
+    .reset-view-btn {
+      position: absolute;
+      bottom: 30px;
+      left: 100px;
+      z-index: 100;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      padding: 10px 20px;
+      border-radius: 30px;
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .reset-view-btn:hover {
+      border-color: var(--gold-primary);
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.18);
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 768px) {
+      .brand-title {
+        font-size: 2rem;
+        letter-spacing: 6px;
+      }
+
+      .cinematic-title {
+        font-size: 2.2rem;
+        letter-spacing: 6px;
+      }
+
+      .cinematic-welcome {
+        font-size: 1.2rem;
+      }
+
+      .nav-panel {
+        top: auto;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        flex-direction: row;
+        padding: 8px 14px;
+        border-radius: 30px;
+      }
+
+      .nav-item .nav-label {
+        display: none;
+      }
+
+      .category-card-panel {
+        width: calc(100% - 40px);
+        right: 20px;
+        top: 80px;
+        max-height: 40vh;
+      }
+
+      .map-header-bar {
+        left: 20px;
+        top: 15px;
+        padding: 10px 16px;
+      }
+
+      .reset-view-btn {
+        left: 20px;
+        bottom: 85px;
+      }
+
+      .map-controls {
+        right: 20px;
+        bottom: 85px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BACKGROUND PATTERN LAYER -->
+  <div class="app-background-texture"></div>
+
+  <!-- SCREEN 1: DIGITAL CARD FRONT LANDING PAGE (Exact Pattern.webp Background) -->
+  <div id="portalScreen" class="portal-screen">
+    <div class="digital-card-container">
+
+      <!-- BRAND HEADER -->
+      <div class="card-brand-header">
+        <h1 class="card-brand-title">AERO</h1>
+        <h2 class="card-brand-subtitle">VILLAS</h2>
+        <div class="card-tagline">
+          <span class="tagline-line"></span>
+          <span class="tagline-text">EVERY TAP UNLOCKS MORE</span>
+          <span class="tagline-line"></span>
+        </div>
+      </div>
+
+      <!-- SINGLE MAIN ACTION BUTTON: LOCATION HIGHLIGHTS -->
+      <div class="trigger-card" id="startLocationBtn">
+        <div class="location-icon-wrapper">
+          <svg class="location-icon-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M70 15 C60 15 52 23 52 33 C52 46 70 60 70 60 C70 60 88 46 88 33 C88 23 80 15 70 15 Z"
+              fill="url(#goldGradient)" stroke="#FFFFFF" stroke-width="2" />
+            <circle cx="70" cy="31" r="5" fill="#0B0914" />
+            <path d="M30 35 C18 35 9 44 9 55 C9 70 30 87 30 87 C30 87 51 70 51 55 C51 44 42 35 30 35 Z"
+              fill="url(#goldGradient)" stroke="#FFFFFF" stroke-width="2.5" />
+            <circle cx="30" cy="53" r="6" fill="#0B0914" />
+            <path d="M30 87 C 30 87, 45 92, 60 82 C 72 74, 52 64, 70 60" stroke="url(#goldGradient)" stroke-width="4"
+              stroke-linecap="round" />
+            <defs>
+              <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#F3E5AB" />
+                <stop offset="50%" stop-color="#D4AF37" />
+                <stop offset="100%" stop-color="#AA7C11" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="trigger-label">LOCATION HIGHLIGHTS</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCREEN 2: CINEMATIC OPENING PAGE (3-Second Reveal) -->
+  <div id="cinematicScreen" class="cinematic-screen">
+    <!-- Real Villa Architectural Background Image -->
+    <img class="cinematic-bg-media" src="assests\clubhouse_render.png" alt="AERO VILLAS Background">
+
+    <div class="cinematic-content">
+      <div class="location-icon-wrapper" style="width: 100px; height: 100px;">
+        <svg class="location-icon-svg" viewBox="0 0 100 100" fill="none">
+          <use href="#goldGradient"></use>
+          <path d="M70 15 C60 15 52 23 52 33 C52 46 70 60 70 60 C70 60 88 46 88 33 C88 23 80 15 70 15 Z"
+            fill="url(#goldGradient)" stroke="#FFFFFF" stroke-width="2" />
+          <circle cx="70" cy="31" r="5" fill="#0B0914" />
+          <path d="M30 35 C18 35 9 44 9 55 C9 70 30 87 30 87 C30 87 51 70 51 55 C51 44 42 35 30 35 Z"
+            fill="url(#goldGradient)" stroke="#FFFFFF" stroke-width="2.5" />
+          <circle cx="30" cy="53" r="6" fill="#0B0914" />
+          <path d="M30 87 C 30 87, 45 92, 60 82 C 72 74, 52 64, 70 60" stroke="url(#goldGradient)" stroke-width="4"
+            stroke-linecap="round" />
+        </svg>
+      </div>
+      <h2 class="cinematic-title">AERO VILLAS</h2>
+      <p class="cinematic-welcome">Welcome to Aero Villas</p>
+      <p class="cinematic-subtitle">"Luxury living, connected to everything that matters"</p>
+
+      <div class="cinematic-progress-bar">
+        <div id="progressFill" class="cinematic-progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: INTERACTIVE MAP PRESENTATION INTERFACE -->
+  <div id="mapInterfaceScreen" class="map-interface-screen">
+
+    <!-- TOP BRANDING OVERLAY -->
+    <div class="map-header-bar">
+      <div class="map-header-logo">AERO<br>VILLAS</div>
+    </div>
+
+    <!-- LEFT SIDE VERTICAL NAVIGATION PANEL -->
+    <div class="nav-panel">
+      <div class="nav-item" data-category="schools">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span class="nav-label">Education</span>
+      </div>
+      <div class="nav-item" data-category="connectivity">
+        <i class="fa-solid fa-plane-departure"></i>
+        <span class="nav-label">Connectivity</span>
+      </div>
+      <div class="nav-item" data-category="hospitals">
+        <i class="fa-solid fa-hospital"></i>
+        <span class="nav-label">Healthcare</span>
+      </div>
+      <div class="nav-item" data-category="entertainment">
+        <i class="fa-solid fa-film"></i>
+        <span class="nav-label">Shopping & Entertainment</span>
+      </div>
+      <div class="nav-item" data-category="highcourt">
+        <i class="fa-solid fa-building-columns"></i>
+        <span class="nav-label">Govt & Future Development</span>
+      </div>
+    </div>
+
+    <!-- RESET TO CENTER BUTTON -->
+    <div class="reset-view-btn" id="resetViewBtn">
+      <i class="fa-solid fa-compass"></i>
+      <span>Reset Center</span>
+    </div>
+
+    <!-- RIGHT SIDE CATEGORY DETAIL PRESENTATION CARD -->
+    <div id="categoryCardPanel" class="category-card-panel">
+      <div class="panel-header">
+        <div class="panel-title" id="panelTitle">
+          <i class="fa-solid fa-location-dot"></i>
+          <span>Highlights</span>
+        </div>
+        <div class="panel-close" id="panelCloseBtn">
+          <i class="fa-solid fa-xmark"></i>
+        </div>
+      </div>
+      <div class="location-list" id="locationListContainer">
+        <!-- Dynamic Category Items Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- MAP ZOOM CONTROLS -->
+    <div class="map-controls">
+      <div class="map-btn" id="zoomInBtn"><i class="fa-solid fa-plus"></i></div>
+      <div class="map-btn" id="zoomOutBtn"><i class="fa-solid fa-minus"></i></div>
+    </div>
+
+    <!-- LEAFLET INTERACTIVE MAP -->
+    <div id="leaflet-map"></div>
+  </div>
+
+  <!-- DETAILED LOCATION EXPLORER CARD / MODAL -->
+  <div id="locationModalBackdrop" class="location-modal-backdrop">
+    <div class="location-modal-card">
+      <div class="modal-close-btn" id="modalCloseBtn">
+        <i class="fa-solid fa-xmark"></i>
+      </div>
+      <div class="modal-image-container">
+        <img id="modalImage" class="modal-image" src="" alt="Location Photograph">
+        <div class="modal-badge-overlay">
+          <i class="fa-solid fa-compass"></i>
+          <span id="modalDistanceBadge"></span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <h3 id="modalTitle" class="modal-title"></h3>
+        <p id="modalDescription" class="modal-description"></p>
+        <div class="modal-meta-row">
+          <div class="modal-distance">
+            <span class="modal-distance-label">Travel Time from Aero Villas</span>
+            <span id="modalDistanceText" class="modal-distance-value"></span>
+          </div>
+          <a id="modalMapsLink" href="#" target="_blank" class="modal-maps-btn">
+            View Location <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // REAL COORDINATES FOR AERO VILLAS & NEARBY LANDMARKS (Shamshabad / Sathamrai, Hyderabad)
+    const AERO_VILLAS_COORDS = [17.2642, 78.4112];
+
+    // REUSABLE LOCATION DATA STRUCTURE USING LOCAL ASSETS & AUTHENTIC REAL PHOTOGRAPHS
+    const locationCategories = {
+      schools: {
+        title: "Education",
+        icon: "fa-graduation-cap",
+        items: [
+          {
+            name: "Rockwell International School",
+            category: "Education",
+            image: "assests/rockwell-international-school-shamshabad-shamshabad-rangareddy-schools-nursery-to-vi-wzr8m3324q.avif",
+            description: "Premium international educational facility offering world-class CBSE & IGCSE curriculum near Aero Villas.",
+            distance: "1 min",
+            coords: [17.2580, 78.4210],
+            googleMapsLink: "https://maps.app.goo.gl/SGoqbcdMxKwnZA4Q8"
+          },
+          {
+            name: "Basil Woods School",
+            category: "Education",
+            image: "assests/shamshabad-Basil-Woods.jpg",
+            description: "Modern value-based holistic campus providing rich sports and academic infrastructure.",
+            distance: "8 mins",
+            coords: [17.2750, 78.4280],
+            googleMapsLink: "https://maps.app.goo.gl/B9kUAYJEKzRUz6rj9"
+          },
+          {
+            name: "Delhi Public School (DPS)",
+            category: "Education",
+            image: "assests/DPS-ND-folder-ref.jpg",
+            description: "Renowned institution celebrated for top academic track record and extensive sports grounds.",
+            distance: "10 mins",
+            coords: [17.2480, 78.4450],
+            googleMapsLink: "https://maps.app.goo.gl/7EuFVadHb4XSUxS97"
+          }
+        ]
+      },
+      connectivity: {
+        title: "Connectivity",
+        icon: "fa-plane-departure",
+        items: [
+          {
+            name: "Rajiv Gandhi International Airport",
+            category: "Connectivity",
+            image: "assests/images (3).jpg",
+            description: "Hyderabad's award-winning international airport hub providing quick seamless global travel.",
+            distance: "12 mins",
+            coords: [17.2403, 78.4294],
+            googleMapsLink: "https://maps.app.goo.gl/Rucrm4JUF6tWo7566"
+          },
+          {
+            name: "Outer Ring Road (ORR)",
+            category: "Connectivity",
+            image: "assests/Outer-Ring-Road-Hyderbad.jpg",
+            description: "8-lane express motorway connecting Shamshabad directly to Gachibowli, HITEC City & Financial District.",
+            distance: "4 mins",
+            coords: [17.2530, 78.4010],
+            googleMapsLink: "https://maps.app.goo.gl/f87Jh4zDp36zqW48A"
+          },
+          {
+            name: "Upcoming Metro Station",
+            category: "Connectivity",
+            image: "assests/Hyderabad-Metro-600.jpg",
+            description: "Phase II Airport Express Metro line connection ensuring rapid transit across the city.",
+            distance: "6 mins",
+            coords: [17.2780, 78.4140],
+            googleMapsLink: "https://maps.app.goo.gl/SGoqbcdMxKwnZA4Q8"
+          }
+        ]
+      },
+      hospitals: {
+        title: "Healthcare",
+        icon: "fa-hospital",
+        items: [
+          {
+            name: "Sunrise Hospital",
+            category: "Healthcare",
+            image: "assests/images (1).jpg",
+            description: "Multi-specialty healthcare facility with 24/7 emergency response and advanced diagnostics.",
+            distance: "5 mins",
+            coords: [17.2510, 78.3980],
+            googleMapsLink: "https://maps.google.com/?q=Sunrise+Hospital+Shamshabad+Hyderabad"
+          }
+        ]
+      },
+      highcourt: {
+        title: "Govt & Future Development",
+        icon: "fa-building-columns",
+        items: [
+          {
+            name: "New Telangana High Court",
+            category: "Govt & Future Development",
+            image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1000&q=80",
+            description: "Upcoming flagship High Court complex driving immense regional growth and commercial land valuation.",
+            distance: "9 mins",
+            coords: [17.2980, 78.4180],
+            googleMapsLink: "https://maps.google.com/?q=New+High+Court+of+Telangana+Budwel+Hyderabad"
+          }
+        ]
+      },
+      entertainment: {
+        title: "Shopping & Entertainment",
+        icon: "fa-film",
+        items: [
+          {
+            name: "Metro Cash & Carry",
+            category: "Shopping & Entertainment",
+            image: "assests/91952410.cms",
+            description: "Major wholesale supermarket hub for premium groceries and daily essentials.",
+            distance: "8 mins",
+            coords: [17.2880, 78.4120],
+            googleMapsLink: "https://maps.app.goo.gl/qGf3CZUWJsSQ4NrD9"
+          },
+          {
+            name: "Aparna Neo Mall",
+            category: "Shopping & Entertainment",
+            image: "assests/Aparna-Neo-Mall-1.jpg",
+            description: "Luxury retail shopping mall featuring premium fashion brands, fine dining, and multiplex cinema.",
+            distance: "14 mins",
+            coords: [17.3050, 78.4020],
+            googleMapsLink: "https://maps.app.goo.gl/MJSZb1nwep9vZwib6"
+          },
+          {
+            name: "Escape Water Park",
+            category: "Shopping & Entertainment",
+            image: "assests/images (4).jpg",
+            description: "High-thrill family resort and water sports destination right near Shamshabad.",
+            distance: "7 mins",
+            coords: [17.2710, 78.3890],
+            googleMapsLink: "https://maps.app.goo.gl/ejVd1pHHYMnUuZaF9"
+          },
+          {
+            name: "Wonderla Hyderabad",
+            category: "Shopping & Entertainment",
+            image: "assests/images (2).jpg",
+            description: "World-class amusement park with over 40 land and water rides.",
+            distance: "22 mins",
+            coords: [17.2180, 78.5380],
+            googleMapsLink: "https://maps.app.goo.gl/2rwK5Mj8i466Da379"
+          }
+        ]
+      }
+    };
+
+    let map, aeroMarker;
+    let activeCategoryMarkers = [];
+    let activePolyline = null;
+
+    // DOM ELEMENTS
+    const portalScreen = document.getElementById('portalScreen');
+    const cinematicScreen = document.getElementById('cinematicScreen');
+    const mapInterfaceScreen = document.getElementById('mapInterfaceScreen');
+    const startLocationBtn = document.getElementById('startLocationBtn');
+    const progressFill = document.getElementById('progressFill');
+    const navItems = document.querySelectorAll('.nav-item');
+    const categoryCardPanel = document.getElementById('categoryCardPanel');
+    const panelTitle = document.getElementById('panelTitle');
+    const locationListContainer = document.getElementById('locationListContainer');
+    const panelCloseBtn = document.getElementById('panelCloseBtn');
+    const resetViewBtn = document.getElementById('resetViewBtn');
+
+    // MODAL ELEMENTS
+    const locationModalBackdrop = document.getElementById('locationModalBackdrop');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalDistanceBadge = document.getElementById('modalDistanceBadge');
+    const modalDistanceText = document.getElementById('modalDistanceText');
+    const modalMapsLink = document.getElementById('modalMapsLink');
+
+    // SCREEN TRANSITION LOGIC
+    startLocationBtn.addEventListener('click', () => {
+      portalScreen.classList.add('hidden');
+
+      setTimeout(() => {
+        cinematicScreen.classList.add('active');
+        setTimeout(() => { progressFill.style.width = '100%'; }, 100);
+
+        setTimeout(() => {
+          cinematicScreen.classList.remove('active');
+          mapInterfaceScreen.classList.add('active');
+          initMap();
+        }, 3200);
+      }, 400);
+    });
+
+    // MAP INITIALIZATION (Esri World Imagery Satellite Map for Google Earth Luxury Feel)
+    function initMap() {
+      if (map) return;
+
+      map = L.map('leaflet-map', {
+        center: AERO_VILLAS_COORDS,
+        zoom: 14,
+        zoomControl: false,
+        attributionControl: false
+      });
+
+      // Satellite Imagery (Esri World Imagery)
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18
+      }).addTo(map);
+
+      // Labels Overlay
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/only_labels/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 18,
+        opacity: 0.85
+      }).addTo(map);
+
+      // Custom Glowing Aero Villas Center Marker
+      const aeroIcon = L.divIcon({
+        className: 'custom-aero-pin',
+        html: `<div class="aero-hub-marker"><i class="fa-solid fa-crown"></i></div>`,
+        iconSize: [44, 44],
+        iconAnchor: [22, 22]
+      });
+
+      aeroMarker = L.marker(AERO_VILLAS_COORDS, { icon: aeroIcon }).addTo(map);
+      aeroMarker.bindPopup(`
+        <div style="text-align:center;">
+          <div class="popup-title">AERO VILLAS</div>
+        </div>
+      `).openPopup();
+    }
+
+    // CATEGORY SELECTION
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const categoryKey = item.getAttribute('data-category');
+
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        showCategoryOnMap(categoryKey);
+      });
+    });
+
+    function showCategoryOnMap(categoryKey) {
+      const catData = locationCategories[categoryKey];
+      if (!catData) return;
+
+      panelTitle.innerHTML = `<i class="fa-solid ${catData.icon}"></i> <span>${catData.title}</span>`;
+      locationListContainer.innerHTML = '';
+
+      clearCategoryVisuals();
+
+      const bounds = L.latLngBounds([AERO_VILLAS_COORDS]);
+
+      catData.items.forEach((loc, index) => {
+        bounds.extend(loc.coords);
+
+        // CREATE CUSTOM LUXURY WHITE PIN CARD DYNAMICALLY MATCHING THE USER'S REFERENCE IMAGE
+        const poiIcon = L.divIcon({
+          className: 'custom-card-pin',
+          html: `
+            <div class="custom-location-pin-card" id="poi-pin-${index}">
+              <div class="pin-card-box">${loc.name}</div>
+              <div class="pin-card-pointer"></div>
+              <div class="pin-card-dot"></div>
+            </div>
+          `,
+          iconSize: [220, 75],
+          iconAnchor: [110, 75]
+        });
+
+        const marker = L.marker(loc.coords, { icon: poiIcon }).addTo(map);
+
+        marker.on('click', () => {
+          openLocationModal(loc);
+          drawRouteLine(AERO_VILLAS_COORDS, loc.coords);
+        });
+
+        activeCategoryMarkers.push(marker);
+
+        // SIDE PANEL CARD ITEM WITH THUMBNAIL FROM ASSETS AND EXPANDABLE DETAILS ACCORDION
+        const card = document.createElement('div');
+        card.className = 'location-item-card';
+        card.innerHTML = `
+          <div class="loc-card-header">
+            <img src="${loc.image}" alt="${loc.name}" class="loc-thumb">
+            <div class="loc-info">
+              <div class="loc-name">${loc.name}</div>
+              <div class="loc-badge-inline">${loc.distance}</div>
+            </div>
+            <button class="loc-card-toggle" aria-label="Toggle Details">
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+          </div>
+          <div class="loc-card-expanded">
+            <div class="loc-expanded-inner">
+              <img src="${loc.image}" alt="${loc.name}" class="loc-expanded-img">
+              <p class="loc-expanded-desc">${loc.description}</p>
+              <div class="loc-expanded-actions">
+                <a href="${loc.googleMapsLink}" target="_blank" class="loc-expanded-maps-btn">
+                  Google Maps <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                <button class="loc-expanded-close-btn" title="Close Details">
+                  Close <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        const headerEl = card.querySelector('.loc-card-header');
+        const toggleBtn = card.querySelector('.loc-card-toggle');
+        const closeBtn = card.querySelector('.loc-expanded-close-btn');
+
+        function focusLocationOnMap(coords) {
+          const targetPoint = map.project(coords, 15).subtract([200, 0]);
+          const targetLatLng = map.unproject(targetPoint, 15);
+          map.flyTo(targetLatLng, 15, { duration: 1.5, easeLinearity: 0.25 });
+        }
+
+        headerEl.addEventListener('click', (e) => {
+          if (e.target.closest('.loc-card-toggle')) return;
+          card.classList.toggle('expanded');
+          focusLocationOnMap(loc.coords);
+          drawRouteLine(AERO_VILLAS_COORDS, loc.coords);
+        });
+
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          card.classList.toggle('expanded');
+          if (card.classList.contains('expanded')) {
+            focusLocationOnMap(loc.coords);
+            drawRouteLine(AERO_VILLAS_COORDS, loc.coords);
+          }
+        });
+
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          card.classList.remove('expanded');
+        });
+
+        locationListContainer.appendChild(card);
+      });
+
+      categoryCardPanel.classList.add('open');
+      map.flyToBounds(bounds, { paddingBottomRight: [460, 80], paddingTopLeft: [120, 80], duration: 1.8 });
+    }
+
+    // OPEN DETAILED LOCATION MODAL
+    function openLocationModal(loc) {
+      modalImage.src = loc.image;
+      modalTitle.innerText = loc.name;
+      modalDescription.innerText = loc.description;
+      modalDistanceBadge.innerText = loc.distance;
+      modalDistanceText.innerText = loc.distance;
+      modalMapsLink.href = loc.googleMapsLink;
+
+      locationModalBackdrop.classList.add('active');
+    }
+
+    modalCloseBtn.addEventListener('click', () => {
+      locationModalBackdrop.classList.remove('active');
+    });
+
+    locationModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === locationModalBackdrop) {
+        locationModalBackdrop.classList.remove('active');
+      }
+    });
+
+    function drawRouteLine(fromCoords, toCoords) {
+      if (activePolyline) {
+        map.removeLayer(activePolyline);
+      }
+
+      activePolyline = L.polyline([fromCoords, toCoords], {
+        color: '#D4AF37',
+        weight: 4,
+        opacity: 0.85,
+        dashArray: '8, 8',
+        lineCap: 'round'
+      }).addTo(map);
+    }
+
+    function clearCategoryVisuals() {
+      activeCategoryMarkers.forEach(m => map.removeLayer(m));
+      activeCategoryMarkers = [];
+      if (activePolyline) {
+        map.removeLayer(activePolyline);
+        activePolyline = null;
+      }
+    }
+
+    panelCloseBtn.addEventListener('click', () => {
+      categoryCardPanel.classList.remove('open');
+      navItems.forEach(i => i.classList.remove('active'));
+      clearCategoryVisuals();
+      map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
+    });
+
+    resetViewBtn.addEventListener('click', () => {
+      categoryCardPanel.classList.remove('open');
+      navItems.forEach(i => i.classList.remove('active'));
+      clearCategoryVisuals();
+      map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
+      if (aeroMarker) aeroMarker.openPopup();
+    });
+
+    document.getElementById('zoomInBtn').addEventListener('click', () => map.zoomIn());
+    document.getElementById('zoomOutBtn').addEventListener('click', () => map.zoomOut());
+  </script>
+</body>
+
+</html>
