@@ -1096,6 +1096,158 @@
         bottom: 85px;
       }
     }
+
+    /* ==========================================================================
+       CINEMATIC VFX ROUTE REVEAL STYLING & ANIMATIONS
+       ========================================================================== */
+    .leaflet-overlay-pane svg.vfx-route-svg {
+      pointer-events: none;
+      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.75));
+    }
+
+    /* Aero Villas Origin Marker VFX */
+    .aero-hub-marker {
+      position: relative;
+      width: 46px;
+      height: 46px;
+      background: radial-gradient(circle, #FFF4CE 0%, #D4AF37 55%, #996D0F 100%);
+      border: 3px solid #FFFFFF;
+      border-radius: 50%;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.9), inset 0 0 10px rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s ease;
+    }
+
+    .aero-hub-marker::before,
+    .aero-hub-marker::after {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      right: -12px;
+      bottom: -12px;
+      border: 2px solid rgba(212, 175, 55, 0.7);
+      border-radius: 50%;
+      animation: aeroPulseRing 3s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+      pointer-events: none;
+    }
+
+    .aero-hub-marker::after {
+      animation-delay: 1.5s;
+    }
+
+    @keyframes aeroPulseRing {
+      0% {
+        transform: scale(0.6);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(2.2);
+        opacity: 0;
+      }
+    }
+
+    .aero-hub-marker.vfx-active {
+      animation: aeroOriginTrigger 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes aeroOriginTrigger {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 25px rgba(212, 175, 55, 0.9);
+      }
+
+      50% {
+        transform: scale(1.35);
+        box-shadow: 0 0 50px rgba(243, 229, 171, 1), 0 0 80px rgba(212, 175, 55, 0.8);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 25px rgba(212, 175, 55, 0.9);
+      }
+    }
+
+    /* Destination Marker VFX Reveal */
+    .custom-location-pin-card {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.75));
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+      position: relative;
+    }
+
+    .custom-location-pin-card.vfx-destination-reveal {
+      animation: destRevealPulse 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes destRevealPulse {
+      0% {
+        transform: scale(0.6) translateY(20px);
+        opacity: 0.2;
+      }
+
+      50% {
+        transform: scale(1.22) translateY(-10px);
+        opacity: 1;
+        filter: drop-shadow(0 0 30px rgba(212, 175, 55, 1));
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+        filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.75));
+      }
+    }
+
+    /* Destination Ripple Ring overlay */
+    .dest-ripple-ring {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 60px;
+      height: 60px;
+      margin-top: 0;
+      margin-left: -30px;
+      margin-bottom: -23px;
+      border: 2px solid rgba(243, 229, 171, 0.9);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: destRippleAnim 1.4s ease-out forwards;
+      z-index: 10;
+    }
+
+    @keyframes destRippleAnim {
+      0% {
+        transform: scale(0.1);
+        opacity: 1;
+        box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.8);
+      }
+
+      100% {
+        transform: scale(2.8);
+        opacity: 0;
+        box-shadow: inset 0 0 0px rgba(212, 175, 55, 0);
+      }
+    }
+
+    /* Motion Blur Overlay during Camera Transitions */
+    .map-interface-screen.camera-moving #leaflet-map {
+      filter: contrast(1.05) saturate(1.1) brightness(0.95);
+      transition: filter 0.5s ease;
+    }
+
+    /* Highlight Active Selected Location Card in Panel */
+    .location-item-card.vfx-active-card {
+      border-color: rgba(212, 175, 55, 0.9) !important;
+      background: linear-gradient(135deg, rgba(35, 28, 65, 0.95) 0%, rgba(18, 14, 34, 0.95) 100%) !important;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.35) !important;
+    }
   </style>
 </head>
 
@@ -1290,7 +1442,7 @@
           {
             name: "Basil Woods School",
             category: "Education",
-            image: "assests/shamshabad-Basil-Woods.jpg",
+            image: "assests/Shamshabad-Basil-Woods.jpg",
             description: "Modern value-based holistic campus providing rich sports and academic infrastructure.",
             distance: "8 mins",
             coords: [17.2750, 78.4280],
@@ -1352,6 +1504,15 @@
             distance: "5 mins",
             coords: [17.2510, 78.3980],
             googleMapsLink: "https://maps.google.com/?q=Sunrise+Hospital+Shamshabad+Hyderabad"
+          },
+          {
+            name: "JIMS HOSPITAL",
+            category: "Healthcare",
+            image: "assests/jimshospital-400x300-1.jpg",
+            description: "Spiritual and holistic healthcare wellness center campus at Muchintal, Shamshabad.",
+            distance: "18 mins",
+            coords: [17.1855, 78.3970],
+            googleMapsLink: "https://maps.app.goo.gl/3jRYwr5cQ5iFNJvP6"
           }
         ]
       },
@@ -1367,6 +1528,15 @@
             distance: "9 mins",
             coords: [17.2980, 78.4180],
             googleMapsLink: "https://maps.google.com/?q=New+High+Court+of+Telangana+Budwel+Hyderabad"
+          },
+          {
+            name: "GMR Aero City",
+            category: "Govt & Future Development",
+            image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80",
+            description: "Future Development: 1500-acre mega business district, IT towers, commercial & retail ecosystem.",
+            distance: "10 mins",
+            coords: [17.2350, 78.4350],
+            googleMapsLink: "https://maps.app.goo.gl/D6QnVankqLKvpJcR7"
           }
         ]
       },
@@ -1382,6 +1552,24 @@
             distance: "8 mins",
             coords: [17.2880, 78.4120],
             googleMapsLink: "https://maps.app.goo.gl/qGf3CZUWJsSQ4NrD9"
+          },
+          {
+            name: "Reliance Smart",
+            category: "Shopping & Entertainment",
+            image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=1000&q=80",
+            description: "Modern supermarket chain providing daily groceries, household essentials & fresh produce.",
+            distance: "5 mins",
+            coords: [17.2610, 78.3965],
+            googleMapsLink: "https://maps.google.com/?q=Reliance+Smart+Shamshabad+Hyderabad"
+          },
+          {
+            name: "Vijetha Super Market",
+            category: "Shopping & Entertainment",
+            image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=80",
+            description: "Popular local supermarket hub located on Rallaguda Road near Shamshabad Bus Stand.",
+            distance: "6 mins",
+            coords: [17.2625, 78.3880],
+            googleMapsLink: "https://share.google/ZattdBtHQiOXx4T9b"
           },
           {
             name: "Aparna Neo Mall",
@@ -1415,8 +1603,12 @@
     };
 
     let map, aeroMarker;
-    let activeCategoryMarkers = [];
-    let activePolyline = null;
+    let categoryMarkersMap = new Map(); // locObj -> L.marker
+    let activeRouteLayers = [];
+    let currentVfxAnimationId = null;
+    let currentParticleAnimationId = null;
+    let activeSelectedLocation = null; // FOCUS MODE STATE: null means Overview Mode
+    const routeGeometryCache = new Map();
 
     // DOM ELEMENTS
     const portalScreen = document.getElementById('portalScreen');
@@ -1483,9 +1675,9 @@
       // Custom Glowing Aero Villas Center Marker
       const aeroIcon = L.divIcon({
         className: 'custom-aero-pin',
-        html: `<div class="aero-hub-marker"><i class="fa-solid fa-crown"></i></div>`,
-        iconSize: [44, 44],
-        iconAnchor: [22, 22]
+        html: `<div class="aero-hub-marker" id="aeroVillasHubMarker"><i class="fa-solid fa-crown"></i></div>`,
+        iconSize: [46, 46],
+        iconAnchor: [23, 23]
       });
 
       aeroMarker = L.marker(AERO_VILLAS_COORDS, { icon: aeroIcon }).addTo(map);
@@ -1516,13 +1708,13 @@
       locationListContainer.innerHTML = '';
 
       clearCategoryVisuals();
+      activeSelectedLocation = null; // Reset to overview for this category
 
       const bounds = L.latLngBounds([AERO_VILLAS_COORDS]);
 
       catData.items.forEach((loc, index) => {
         bounds.extend(loc.coords);
 
-        // CREATE CUSTOM LUXURY WHITE PIN CARD DYNAMICALLY MATCHING THE USER'S REFERENCE IMAGE
         const poiIcon = L.divIcon({
           className: 'custom-card-pin',
           html: `
@@ -1532,22 +1724,22 @@
               <div class="pin-card-dot"></div>
             </div>
           `,
-          iconSize: [220, 75],
-          iconAnchor: [110, 75]
+          iconSize: [220, 68],
+          iconAnchor: [110, 68]
         });
 
         const marker = L.marker(loc.coords, { icon: poiIcon }).addTo(map);
+        categoryMarkersMap.set(loc, marker);
 
         marker.on('click', () => {
           openLocationModal(loc);
-          drawRouteLine(AERO_VILLAS_COORDS, loc.coords);
+          triggerCinematicVfxRoute(loc, marker, null);
         });
 
-        activeCategoryMarkers.push(marker);
-
-        // SIDE PANEL CARD ITEM WITH THUMBNAIL FROM ASSETS AND EXPANDABLE DETAILS ACCORDION
+        // SIDE PANEL CARD ITEM
         const card = document.createElement('div');
         card.className = 'location-item-card';
+        card.setAttribute('data-loc-name', loc.name);
         card.innerHTML = `
           <div class="loc-card-header">
             <img src="${loc.image}" alt="${loc.name}" class="loc-thumb">
@@ -1579,25 +1771,17 @@
         const toggleBtn = card.querySelector('.loc-card-toggle');
         const closeBtn = card.querySelector('.loc-expanded-close-btn');
 
-        function focusLocationOnMap(coords) {
-          const targetPoint = map.project(coords, 15).subtract([200, 0]);
-          const targetLatLng = map.unproject(targetPoint, 15);
-          map.flyTo(targetLatLng, 15, { duration: 1.5, easeLinearity: 0.25 });
-        }
-
         headerEl.addEventListener('click', (e) => {
           if (e.target.closest('.loc-card-toggle')) return;
           card.classList.toggle('expanded');
-          focusLocationOnMap(loc.coords);
-          drawRouteLine(AERO_VILLAS_COORDS, loc.coords);
+          triggerCinematicVfxRoute(loc, marker, card);
         });
 
         toggleBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           card.classList.toggle('expanded');
           if (card.classList.contains('expanded')) {
-            focusLocationOnMap(loc.coords);
-            drawRouteLine(AERO_VILLAS_COORDS, loc.coords);
+            triggerCinematicVfxRoute(loc, marker, card);
           }
         });
 
@@ -1610,10 +1794,274 @@
       });
 
       categoryCardPanel.classList.add('open');
+      updateMarkersVisibility();
       map.flyToBounds(bounds, { paddingBottomRight: [460, 80], paddingTopLeft: [120, 80], duration: 1.8 });
     }
 
-    // OPEN DETAILED LOCATION MODAL
+    // UPDATE MARKERS & LABELS VISIBILITY ACCORDING TO FOCUS MODE
+    function updateMarkersVisibility() {
+      categoryMarkersMap.forEach((marker, loc) => {
+        const markerElement = marker.getElement();
+        if (activeSelectedLocation === null) {
+          // OVERVIEW MODE: Show all markers in category
+          if (markerElement) {
+            markerElement.style.display = '';
+            markerElement.style.opacity = '1';
+            markerElement.style.pointerEvents = 'auto';
+          }
+        } else {
+          // FOCUS MODE: Show ONLY active selected location marker
+          if (loc === activeSelectedLocation) {
+            if (markerElement) {
+              markerElement.style.display = '';
+              markerElement.style.opacity = '1';
+              markerElement.style.pointerEvents = 'auto';
+            }
+          } else {
+            if (markerElement) {
+              markerElement.style.display = 'none';
+              markerElement.style.opacity = '0';
+              markerElement.style.pointerEvents = 'none';
+            }
+          }
+        }
+      });
+    }
+
+    // FETCH REAL ROAD NETWORK GEOMETRY VIA OSRM API
+    async function fetchRoadRouteGeometry(fromCoords, toCoords) {
+      const cacheKey = `${fromCoords[0]},${fromCoords[1]}_${toCoords[0]},${toCoords[1]}`;
+      if (routeGeometryCache.has(cacheKey)) {
+        return routeGeometryCache.get(cacheKey);
+      }
+
+      try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${fromCoords[1]},${fromCoords[0]};${toCoords[1]},${toCoords[0]}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+          const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          routeGeometryCache.set(cacheKey, coords);
+          return coords;
+        }
+      } catch (e) {
+        console.warn('OSRM routing fetch failed, falling back to direct geometric curve', e);
+      }
+
+      // Fallback: smooth interpolated polyline points
+      const points = [];
+      const steps = 30;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const lat = fromCoords[0] + (toCoords[0] - fromCoords[0]) * t;
+        const lng = fromCoords[1] + (toCoords[1] - fromCoords[1]) * t;
+        points.push([lat, lng]);
+      }
+      routeGeometryCache.set(cacheKey, points);
+      return points;
+    }
+
+    // CINEMATIC VFX ROUTE REVEAL CONTROLLER (FOCUS MODE STRICT ENFORCEMENT)
+    async function triggerCinematicVfxRoute(targetLoc, markerObj, cardEl) {
+      // 1. SET FOCUS MODE STATE IMMEDIATELY BEFORE ANY ANIMATION
+      activeSelectedLocation = targetLoc;
+      updateMarkersVisibility();
+
+      // 2. Highlight location card in panel if available
+      document.querySelectorAll('.location-item-card').forEach(c => c.classList.remove('vfx-active-card'));
+      if (cardEl) {
+        cardEl.classList.add('vfx-active-card');
+      }
+
+      // 3. Clear old active route layers & animations (Ensure zero cross-connections)
+      clearRouteVisualsOnly();
+
+      // Check user reduced motion setting
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // 4. Aero Villas Origin Marker Pulse
+      const aeroEl = document.getElementById('aeroVillasHubMarker');
+      if (aeroEl) {
+        aeroEl.classList.remove('vfx-active');
+        void aeroEl.offsetWidth; // Force reflow
+        aeroEl.classList.add('vfx-active');
+      }
+
+      // 5. Fetch actual road route geometry
+      const latLngPoints = await fetchRoadRouteGeometry(AERO_VILLAS_COORDS, targetLoc.coords);
+
+      // 6. MAP FOCUS: Fit map viewport ONLY to Aero Villas + Selected Destination + Route
+      const focusBounds = L.latLngBounds([AERO_VILLAS_COORDS, targetLoc.coords]);
+      latLngPoints.forEach(pt => focusBounds.extend(pt));
+
+      mapInterfaceScreen.classList.add('camera-moving');
+
+      if (prefersReducedMotion) {
+        map.fitBounds(focusBounds, { paddingBottomRight: [400, 60], paddingTopLeft: [80, 60] });
+        setTimeout(() => mapInterfaceScreen.classList.remove('camera-moving'), 300);
+      } else {
+        // Smooth camera transition to focus ONLY on selected route bounds
+        map.flyToBounds(focusBounds, {
+          paddingBottomRight: [420, 70],
+          paddingTopLeft: [100, 70],
+          duration: 1.6,
+          easeLinearity: 0.25
+        });
+        setTimeout(() => mapInterfaceScreen.classList.remove('camera-moving'), 1600);
+      }
+
+      // 7. Draw Layered Glowing SVG Polylines (ONLY FOR SELECTED DESTINATION)
+      const baseOutline = L.polyline(latLngPoints, {
+        color: '#000000',
+        weight: 8,
+        opacity: 0.6,
+        lineCap: 'round',
+        lineJoin: 'round'
+      }).addTo(map);
+
+      const outerGlow = L.polyline(latLngPoints, {
+        color: '#D4AF37',
+        weight: 6,
+        opacity: 0.5,
+        lineCap: 'round',
+        lineJoin: 'round',
+        className: 'vfx-route-glow'
+      }).addTo(map);
+
+      const coreLine = L.polyline(latLngPoints, {
+        color: '#FFF4CE',
+        weight: 3,
+        opacity: 0.95,
+        lineCap: 'round',
+        lineJoin: 'round'
+      }).addTo(map);
+
+      activeRouteLayers.push(baseOutline, outerGlow, coreLine);
+
+      if (prefersReducedMotion) {
+        triggerDestinationReveal(targetLoc, markerObj);
+        return;
+      }
+
+      // 8. Progressive Route Drawing & Moving Light Pulse
+      const corePath = coreLine._path;
+      const glowPath = outerGlow._path;
+      const svgContainer = corePath.ownerSVGElement;
+      if (svgContainer) {
+        svgContainer.classList.add('vfx-route-svg');
+      }
+
+      const pathLength = corePath.getTotalLength();
+
+      corePath.style.strokeDasharray = `${pathLength} ${pathLength}`;
+      corePath.style.strokeDashoffset = pathLength;
+      glowPath.style.strokeDasharray = `${pathLength} ${pathLength}`;
+      glowPath.style.strokeDashoffset = pathLength;
+
+      const pulseDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      pulseDot.setAttribute('r', '7');
+      pulseDot.setAttribute('fill', '#FFFFFF');
+      pulseDot.setAttribute('filter', 'drop-shadow(0 0 8px #F3E5AB) drop-shadow(0 0 16px #D4AF37)');
+      svgContainer.appendChild(pulseDot);
+
+      const particleGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      svgContainer.appendChild(particleGroup);
+
+      const animDuration = 1800;
+      const startTime = performance.now();
+
+      function animateVfxStep(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / animDuration);
+
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const currentLength = easeProgress * pathLength;
+
+        corePath.style.strokeDashoffset = pathLength - currentLength;
+        glowPath.style.strokeDashoffset = pathLength - currentLength;
+
+        const pt = corePath.getPointAtLength(currentLength);
+        pulseDot.setAttribute('cx', pt.x);
+        pulseDot.setAttribute('cy', pt.y);
+
+        if (progress < 0.98 && Math.random() < 0.45) {
+          spawnLightParticle(particleGroup, pt.x, pt.y);
+        }
+
+        if (progress < 1) {
+          currentVfxAnimationId = requestAnimationFrame(animateVfxStep);
+        } else {
+          if (pulseDot.parentNode) pulseDot.parentNode.removeChild(pulseDot);
+          triggerDestinationReveal(targetLoc, markerObj);
+          startStationaryEnergyFlow(corePath, pathLength);
+        }
+      }
+
+      currentVfxAnimationId = requestAnimationFrame(animateVfxStep);
+    }
+
+    function spawnLightParticle(group, x, y) {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      const r = 1.5 + Math.random() * 2.5;
+      const offsetX = (Math.random() - 0.5) * 8;
+      const offsetY = (Math.random() - 0.5) * 8;
+
+      p.setAttribute('cx', x + offsetX);
+      p.setAttribute('cy', y + offsetY);
+      p.setAttribute('r', r);
+      p.setAttribute('fill', Math.random() > 0.5 ? '#FFF4CE' : '#D4AF37');
+      p.setAttribute('opacity', '0.9');
+
+      group.appendChild(p);
+
+      let fadeTime = 0;
+      function fade() {
+        fadeTime += 0.05;
+        p.setAttribute('opacity', (0.9 - fadeTime).toString());
+        if (fadeTime < 0.9) {
+          requestAnimationFrame(fade);
+        } else {
+          if (p.parentNode) p.parentNode.removeChild(p);
+        }
+      }
+      requestAnimationFrame(fade);
+    }
+
+    function startStationaryEnergyFlow(pathEl, totalLen) {
+      pathEl.style.strokeDasharray = '12 12';
+      let offset = 0;
+      function loopFlow() {
+        offset = (offset - 0.6) % 24;
+        pathEl.style.strokeDashoffset = offset;
+        currentParticleAnimationId = requestAnimationFrame(loopFlow);
+      }
+      loopFlow();
+    }
+
+    // DESTINATION REVEAL RIPPLE & MARKER EFFECT
+    function triggerDestinationReveal(targetLoc, markerObj) {
+      if (!markerObj) return;
+
+      const markerElement = markerObj.getElement();
+      if (markerElement) {
+        const pinCard = markerElement.querySelector('.custom-location-pin-card');
+        if (pinCard) {
+          pinCard.classList.remove('vfx-destination-reveal');
+          void pinCard.offsetWidth; // Force reflow
+          pinCard.classList.add('vfx-destination-reveal');
+
+          const ripple = document.createElement('div');
+          ripple.className = 'dest-ripple-ring';
+          pinCard.appendChild(ripple);
+
+          setTimeout(() => {
+            if (ripple.parentNode) ripple.parentNode.removeChild(ripple);
+          }, 1500);
+        }
+      }
+    }
+
     function openLocationModal(loc) {
       modalImage.src = loc.image;
       modalTitle.innerText = loc.name;
@@ -1635,27 +2083,44 @@
       }
     });
 
-    function drawRouteLine(fromCoords, toCoords) {
-      if (activePolyline) {
-        map.removeLayer(activePolyline);
+    function clearRouteVisualsOnly() {
+      if (currentVfxAnimationId) {
+        cancelAnimationFrame(currentVfxAnimationId);
+        currentVfxAnimationId = null;
       }
-
-      activePolyline = L.polyline([fromCoords, toCoords], {
-        color: '#D4AF37',
-        weight: 4,
-        opacity: 0.85,
-        dashArray: '8, 8',
-        lineCap: 'round'
-      }).addTo(map);
+      if (currentParticleAnimationId) {
+        cancelAnimationFrame(currentParticleAnimationId);
+        currentParticleAnimationId = null;
+      }
+      activeRouteLayers.forEach(layer => map.removeLayer(layer));
+      activeRouteLayers = [];
     }
 
     function clearCategoryVisuals() {
-      activeCategoryMarkers.forEach(m => map.removeLayer(m));
-      activeCategoryMarkers = [];
-      if (activePolyline) {
-        map.removeLayer(activePolyline);
-        activePolyline = null;
+      categoryMarkersMap.forEach(m => map.removeLayer(m));
+      categoryMarkersMap.clear();
+      activeSelectedLocation = null;
+      clearRouteVisualsOnly();
+    }
+
+    // RETURN TO OVERVIEW / RESET VIEW
+    function returnToOverview() {
+      activeSelectedLocation = null;
+      document.querySelectorAll('.location-item-card').forEach(c => {
+        c.classList.remove('vfx-active-card', 'expanded');
+      });
+      clearRouteVisualsOnly();
+      updateMarkersVisibility();
+
+      // Fit map back to all category markers if active, else to Aero Villas
+      if (categoryMarkersMap.size > 0) {
+        const bounds = L.latLngBounds([AERO_VILLAS_COORDS]);
+        categoryMarkersMap.forEach((_, loc) => bounds.extend(loc.coords));
+        map.flyToBounds(bounds, { paddingBottomRight: [460, 80], paddingTopLeft: [120, 80], duration: 1.5 });
+      } else {
+        map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
       }
+      if (aeroMarker) aeroMarker.openPopup();
     }
 
     panelCloseBtn.addEventListener('click', () => {
@@ -1665,13 +2130,7 @@
       map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
     });
 
-    resetViewBtn.addEventListener('click', () => {
-      categoryCardPanel.classList.remove('open');
-      navItems.forEach(i => i.classList.remove('active'));
-      clearCategoryVisuals();
-      map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
-      if (aeroMarker) aeroMarker.openPopup();
-    });
+    resetViewBtn.addEventListener('click', returnToOverview);
 
     document.getElementById('zoomInBtn').addEventListener('click', () => map.zoomIn());
     document.getElementById('zoomOutBtn').addEventListener('click', () => map.zoomOut());
