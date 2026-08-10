@@ -1043,7 +1043,44 @@
       background: rgba(212, 175, 55, 0.18);
     }
 
-    /* RESPONSIVE DESIGN */
+    /* ==========================================================================
+       RESPONSIVE MOBILE & TABLET MAP UI / COLLAPSIBLE BOTTOM SHEET
+       ========================================================================== */
+    :root {
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .sheet-drag-handle {
+      display: none;
+    }
+
+    .panel-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-expand-toggle {
+      display: none;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.7);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.25s ease;
+    }
+
+    .panel-expand-toggle:hover {
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.2);
+    }
+
+    /* RESPONSIVE DESIGN FOR PHONES & TABLETS (<= 768px) */
     @media (max-width: 768px) {
       .brand-title {
         font-size: 2rem;
@@ -1059,41 +1096,191 @@
         font-size: 1.2rem;
       }
 
+      /* Compact Header Logo Overlay */
+      .map-header-bar {
+        left: 16px;
+        top: calc(12px + var(--safe-top));
+        padding: 8px 14px;
+        font-size: 0.75rem;
+      }
+
+      /* Floating Horizontal Category Navigation Bar */
       .nav-panel {
         top: auto;
-        bottom: 20px;
+        bottom: calc(16px + var(--safe-bottom));
         left: 50%;
         transform: translateX(-50%);
         flex-direction: row;
-        padding: 8px 14px;
+        padding: 6px 12px;
         border-radius: 30px;
+        gap: 6px;
+        background: rgba(18, 14, 34, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75);
+        z-index: 120;
+        max-width: calc(100vw - 32px);
+        overflow-x: auto;
+      }
+
+      .nav-item {
+        padding: 10px;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
       }
 
       .nav-item .nav-label {
         display: none;
       }
 
+      /* Mobile Bottom Sheet Presentation Panel */
       .category-card-panel {
-        width: calc(100% - 40px);
-        right: 20px;
-        top: 80px;
-        max-height: 40vh;
+        position: fixed;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        height: auto;
+        max-height: calc(34vh + var(--safe-bottom));
+        z-index: 110;
+        border-radius: 24px 24px 0 0;
+        border: 1px solid var(--glass-border);
+        border-bottom: none;
+        padding: 12px 16px calc(16px + var(--safe-bottom)) 16px;
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        gap: 10px;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85);
       }
 
-      .map-header-bar {
-        left: 20px;
-        top: 15px;
-        padding: 10px 16px;
+      .category-card-panel.open {
+        transform: translateY(0);
       }
 
+      .category-card-panel.sheet-expanded {
+        max-height: calc(60vh + var(--safe-bottom));
+      }
+
+      .category-card-panel.sheet-expanded .panel-expand-toggle i {
+        transform: rotate(180deg);
+      }
+
+      /* Bottom Sheet Drag Handle */
+      .sheet-drag-handle {
+        display: block;
+        width: 38px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.35);
+        border-radius: 3px;
+        margin: 0 auto 4px auto;
+        cursor: grab;
+      }
+
+      .panel-expand-toggle {
+        display: flex;
+      }
+
+      .panel-header {
+        padding-bottom: 8px;
+        margin-bottom: 2px;
+      }
+
+      .panel-title {
+        font-size: 1rem;
+        letter-spacing: 1.5px;
+      }
+
+      /* Compact Card Layout inside Bottom Sheet */
+      .location-list {
+        gap: 8px;
+        max-height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 70px; /* Leave space so bottom floating nav doesn't cover list */
+      }
+
+      .location-item-card {
+        border-radius: 12px;
+      }
+
+      .loc-card-header {
+        padding: 8px 10px;
+        gap: 10px;
+      }
+
+      .loc-thumb {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+      }
+
+      .loc-name {
+        font-size: 0.85rem;
+        line-height: 1.2;
+      }
+
+      .loc-badge-inline {
+        font-size: 0.68rem;
+        padding: 1px 6px;
+      }
+
+      .location-item-card.expanded .loc-card-expanded {
+        max-height: 280px;
+      }
+
+      .loc-expanded-inner {
+        padding: 10px;
+        gap: 8px;
+      }
+
+      .loc-expanded-img {
+        height: 110px;
+      }
+
+      .loc-expanded-desc {
+        font-size: 0.78rem;
+      }
+
+      /* Compact Reset View Button */
       .reset-view-btn {
-        left: 20px;
-        bottom: 85px;
+        position: fixed;
+        left: 16px;
+        bottom: calc(75px + var(--safe-bottom));
+        z-index: 105;
+        padding: 8px 14px;
+        font-size: 0.76rem;
+        border-radius: 20px;
+        gap: 6px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
       }
 
+      /* Compact Map Zoom Controls */
       .map-controls {
+        position: fixed;
+        right: 16px;
+        bottom: calc(75px + var(--safe-bottom));
+        z-index: 105;
+        gap: 6px;
+      }
+
+      .map-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+      }
+    }
+
+    /* TABLET RESPONSIVE BREAKPOINT (769px - 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .category-card-panel {
+        width: 360px;
+        top: 90px;
         right: 20px;
-        bottom: 85px;
+        max-height: calc(100vh - 120px);
       }
     }
 
@@ -1365,15 +1552,21 @@
       <span>Reset Center</span>
     </div>
 
-    <!-- RIGHT SIDE CATEGORY DETAIL PRESENTATION CARD -->
+    <!-- RIGHT SIDE CATEGORY DETAIL PRESENTATION CARD / MOBILE BOTTOM SHEET -->
     <div id="categoryCardPanel" class="category-card-panel">
+      <div class="sheet-drag-handle" id="sheetDragHandle"></div>
       <div class="panel-header">
         <div class="panel-title" id="panelTitle">
           <i class="fa-solid fa-location-dot"></i>
           <span>Highlights</span>
         </div>
-        <div class="panel-close" id="panelCloseBtn">
-          <i class="fa-solid fa-xmark"></i>
+        <div class="panel-header-actions">
+          <div class="panel-expand-toggle" id="panelExpandBtn" title="Expand / Collapse Sheet">
+            <i class="fa-solid fa-chevron-up"></i>
+          </div>
+          <div class="panel-close" id="panelCloseBtn" title="Close Panel">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
         </div>
       </div>
       <div class="location-list" id="locationListContainer">
@@ -1795,7 +1988,11 @@
 
       categoryCardPanel.classList.add('open');
       updateMarkersVisibility();
-      map.flyToBounds(bounds, { paddingBottomRight: [460, 80], paddingTopLeft: [120, 80], duration: 1.8 });
+
+      const isMobile = window.innerWidth <= 768;
+      const catPadRightBottom = isMobile ? [40, 180] : [460, 80];
+      const catPadTopLeft = isMobile ? [40, 40] : [120, 80];
+      map.flyToBounds(bounds, { paddingBottomRight: catPadRightBottom, paddingTopLeft: catPadTopLeft, duration: 1.8 });
     }
 
     // UPDATE MARKERS & LABELS VISIBILITY ACCORDING TO FOCUS MODE
@@ -1897,14 +2094,18 @@
 
       mapInterfaceScreen.classList.add('camera-moving');
 
+      const isMobile = window.innerWidth <= 768;
+      const vfxPadRightBottom = isMobile ? [40, 200] : [420, 70];
+      const vfxPadTopLeft = isMobile ? [40, 40] : [100, 70];
+
       if (prefersReducedMotion) {
-        map.fitBounds(focusBounds, { paddingBottomRight: [400, 60], paddingTopLeft: [80, 60] });
+        map.fitBounds(focusBounds, { paddingBottomRight: vfxPadRightBottom, paddingTopLeft: vfxPadTopLeft });
         setTimeout(() => mapInterfaceScreen.classList.remove('camera-moving'), 300);
       } else {
         // Smooth camera transition to focus ONLY on selected route bounds
         map.flyToBounds(focusBounds, {
-          paddingBottomRight: [420, 70],
-          paddingTopLeft: [100, 70],
+          paddingBottomRight: vfxPadRightBottom,
+          paddingTopLeft: vfxPadTopLeft,
           duration: 1.6,
           easeLinearity: 0.25
         });
@@ -2103,6 +2304,41 @@
       clearRouteVisualsOnly();
     }
 
+    // MOBILE BOTTOM SHEET EXPAND / COLLAPSE TOGGLE
+    const panelExpandBtn = document.getElementById('panelExpandBtn');
+    const sheetDragHandle = document.getElementById('sheetDragHandle');
+
+    function toggleMobileSheetExpand() {
+      if (window.innerWidth <= 768) {
+        categoryCardPanel.classList.toggle('sheet-expanded');
+      }
+    }
+
+    if (panelExpandBtn) {
+      panelExpandBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMobileSheetExpand();
+      });
+    }
+
+    if (sheetDragHandle) {
+      sheetDragHandle.addEventListener('click', toggleMobileSheetExpand);
+      let touchStartY = 0;
+      sheetDragHandle.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      sheetDragHandle.addEventListener('touchend', (e) => {
+        const touchEndY = e.changedTouches[0].clientY;
+        const diff = touchStartY - touchEndY;
+        if (diff > 30) {
+          categoryCardPanel.classList.add('sheet-expanded');
+        } else if (diff < -30) {
+          categoryCardPanel.classList.remove('sheet-expanded');
+        }
+      }, { passive: true });
+    }
+
     // RETURN TO OVERVIEW / RESET VIEW
     function returnToOverview() {
       activeSelectedLocation = null;
@@ -2112,11 +2348,15 @@
       clearRouteVisualsOnly();
       updateMarkersVisibility();
 
+      const isMobile = window.innerWidth <= 768;
+      const padRightBottom = isMobile ? [40, 180] : [460, 80];
+      const padTopLeft = isMobile ? [40, 40] : [120, 80];
+
       // Fit map back to all category markers if active, else to Aero Villas
       if (categoryMarkersMap.size > 0) {
         const bounds = L.latLngBounds([AERO_VILLAS_COORDS]);
         categoryMarkersMap.forEach((_, loc) => bounds.extend(loc.coords));
-        map.flyToBounds(bounds, { paddingBottomRight: [460, 80], paddingTopLeft: [120, 80], duration: 1.5 });
+        map.flyToBounds(bounds, { paddingBottomRight: padRightBottom, paddingTopLeft: padTopLeft, duration: 1.5 });
       } else {
         map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
       }
@@ -2124,7 +2364,7 @@
     }
 
     panelCloseBtn.addEventListener('click', () => {
-      categoryCardPanel.classList.remove('open');
+      categoryCardPanel.classList.remove('open', 'sheet-expanded');
       navItems.forEach(i => i.classList.remove('active'));
       clearCategoryVisuals();
       map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
