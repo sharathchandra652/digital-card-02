@@ -357,7 +357,7 @@
       z-index: 1;
     }
 
-    /* TOP HEADER BAR OVER MAP */
+    /* TOP HEADER BAR OVER MAP (HOME BUTTON) */
     .map-header-bar {
       position: absolute;
       top: 25px;
@@ -374,6 +374,14 @@
       justify-content: center;
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
       pointer-events: auto;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .map-header-bar:hover {
+      border-color: var(--gold-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 35px rgba(212, 175, 55, 0.4);
     }
 
     .map-header-logo {
@@ -1144,16 +1152,19 @@
         right: 0;
         width: 100vw;
         height: auto;
-        max-height: calc(34vh + var(--safe-bottom));
+        max-height: calc(44dvh + var(--safe-bottom));
         z-index: 110;
         border-radius: 24px 24px 0 0;
         border: 1px solid var(--glass-border);
         border-bottom: none;
-        padding: 12px 16px calc(16px + var(--safe-bottom)) 16px;
+        padding: 10px 14px calc(14px + var(--safe-bottom)) 14px;
         transform: translateY(100%);
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85);
+        overflow: hidden; /* Header fixed, list handles scrolling */
       }
 
       .category-card-panel.open {
@@ -1161,7 +1172,7 @@
       }
 
       .category-card-panel.sheet-expanded {
-        max-height: calc(60vh + var(--safe-bottom));
+        max-height: calc(72dvh + var(--safe-bottom));
       }
 
       .category-card-panel.sheet-expanded .panel-expand-toggle i {
@@ -1171,12 +1182,13 @@
       /* Bottom Sheet Drag Handle */
       .sheet-drag-handle {
         display: block;
-        width: 38px;
+        width: 36px;
         height: 4px;
         background: rgba(255, 255, 255, 0.35);
         border-radius: 3px;
-        margin: 0 auto 4px auto;
+        margin: 0 auto 2px auto;
         cursor: grab;
+        flex-shrink: 0;
       }
 
       .panel-expand-toggle {
@@ -1184,51 +1196,62 @@
       }
 
       .panel-header {
-        padding-bottom: 8px;
+        padding-bottom: 6px;
         margin-bottom: 2px;
+        flex-shrink: 0;
       }
 
       .panel-title {
-        font-size: 1rem;
+        font-size: 0.95rem;
         letter-spacing: 1.5px;
       }
 
-      /* Compact Card Layout inside Bottom Sheet */
+      /* Compact Card Layout inside Bottom Sheet (Internal Scrolling) */
       .location-list {
+        display: flex;
+        flex-direction: column;
         gap: 8px;
-        max-height: 100%;
+        flex: 1;
         overflow-y: auto;
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 70px; /* Leave space so bottom floating nav doesn't cover list */
+        padding-bottom: calc(76px + var(--safe-bottom)); /* Full scroll space above floating nav */
       }
 
       .location-item-card {
         border-radius: 12px;
+        flex-shrink: 0;
       }
 
       .loc-card-header {
         padding: 8px 10px;
         gap: 10px;
+        align-items: center;
       }
 
       .loc-thumb {
-        width: 42px;
-        height: 42px;
+        width: 44px;
+        height: 44px;
         border-radius: 8px;
+        flex-shrink: 0;
       }
 
       .loc-name {
-        font-size: 0.85rem;
-        line-height: 1.2;
+        font-size: 0.84rem;
+        font-weight: 700;
+        line-height: 1.25;
+        white-space: normal;
+        overflow: visible;
+        word-break: break-word;
       }
 
       .loc-badge-inline {
         font-size: 0.68rem;
-        padding: 1px 6px;
+        padding: 2px 7px;
       }
 
       .location-item-card.expanded .loc-card-expanded {
-        max-height: 280px;
+        max-height: 300px;
       }
 
       .loc-expanded-inner {
@@ -1237,11 +1260,12 @@
       }
 
       .loc-expanded-img {
-        height: 110px;
+        height: 115px;
       }
 
       .loc-expanded-desc {
         font-size: 0.78rem;
+        line-height: 1.4;
       }
 
       /* Compact Reset View Button */
@@ -1517,8 +1541,8 @@
   <!-- SCREEN 3: INTERACTIVE MAP PRESENTATION INTERFACE -->
   <div id="mapInterfaceScreen" class="map-interface-screen">
 
-    <!-- TOP BRANDING OVERLAY -->
-    <div class="map-header-bar">
+    <!-- TOP BRANDING OVERLAY (HOME NAVIGATION BUTTON) -->
+    <div class="map-header-bar" id="mapHomeBtn" title="Return to Home Page">
       <div class="map-header-logo">AERO<br>VILLAS</div>
     </div>
 
@@ -2302,6 +2326,18 @@
       categoryMarkersMap.clear();
       activeSelectedLocation = null;
       clearRouteVisualsOnly();
+    }
+
+    // AERO VILLAS LOGO HOME BUTTON NAVIGATION
+    const mapHomeBtn = document.getElementById('mapHomeBtn');
+    if (mapHomeBtn) {
+      mapHomeBtn.addEventListener('click', () => {
+        mapInterfaceScreen.classList.remove('active');
+        categoryCardPanel.classList.remove('open', 'sheet-expanded');
+        navItems.forEach(i => i.classList.remove('active'));
+        clearCategoryVisuals();
+        portalScreen.classList.remove('hidden');
+      });
     }
 
     // MOBILE BOTTOM SHEET EXPAND / COLLAPSE TOGGLE
