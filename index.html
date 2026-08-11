@@ -1122,8 +1122,8 @@
       background: rgba(212, 175, 55, 0.2);
     }
 
-    /* RESPONSIVE DESIGN FOR PHONES & TABLETS (<= 768px) */
-    @media (max-width: 768px) {
+    /* RESPONSIVE DESIGN FOR PHONES & TABLETS (<= 1024px) */
+    @media (max-width: 1024px) {
       .brand-title {
         font-size: 2rem;
         letter-spacing: 6px;
@@ -1141,7 +1141,7 @@
       /* Compact Header Logo Overlay */
       .map-header-bar {
         left: 16px;
-        top: calc(12px + var(--safe-top));
+        top: calc(12px + var(--safe-top, 0px));
         padding: 8px 14px;
         font-size: 0.75rem;
       }
@@ -1149,7 +1149,7 @@
       /* Floating Horizontal Category Navigation Bar */
       .nav-panel {
         top: auto;
-        bottom: calc(16px + var(--safe-bottom));
+        bottom: calc(16px + var(--safe-bottom, 0px));
         left: 50%;
         transform: translateX(-50%);
         flex-direction: row;
@@ -1186,7 +1186,7 @@
         right: 0;
         width: 100vw;
         height: auto;
-        max-height: calc(52dvh + var(--safe-bottom, 0px));
+        max-height: calc(48dvh + var(--safe-bottom, 0px));
         z-index: 110;
         border-radius: 24px 24px 0 0;
         border: 1px solid var(--glass-border);
@@ -1206,7 +1206,7 @@
       }
 
       .category-card-panel.sheet-expanded {
-        max-height: calc(84dvh + var(--safe-bottom, 0px));
+        max-height: calc(85dvh + var(--safe-bottom, 0px));
       }
 
       .category-card-panel.sheet-expanded .panel-expand-toggle i {
@@ -1240,24 +1240,48 @@
         letter-spacing: 1.5px;
       }
 
-      /* Compact Card Layout inside Bottom Sheet (Internal Scrolling) */
+      /* Mobile Main Selection View: Horizontal Peek Card Carousel */
       .location-list {
         display: flex;
-        flex-direction: column;
-        gap: 8px;
+        flex-direction: row;
+        gap: 12px;
         flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow-x: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
-        overscroll-behavior: contain;
-        scroll-behavior: smooth;
-        padding-bottom: calc(76px + var(--safe-bottom, 0px));
+        touch-action: pan-x;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        padding: 4px 4px calc(64px + var(--safe-bottom, 0px)) 4px;
       }
 
       .location-item-card {
-        border-radius: 12px;
+        width: 85vw;
+        max-width: 360px;
         flex-shrink: 0;
+        scroll-snap-align: start;
+        border-radius: 16px;
+        transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+      }
+
+      /* SINGLE FOCUSED CARD MODE (ON MOBILE / TABLET) */
+      .location-list.has-focused-card {
+        display: block !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        touch-action: pan-y !important;
+        padding-bottom: calc(76px + var(--safe-bottom, 0px));
+      }
+
+      .location-list.has-focused-card .location-item-card:not(.expanded) {
+        display: none !important;
+      }
+
+      .location-list.has-focused-card .location-item-card.expanded {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        scroll-snap-align: none !important;
       }
 
       .loc-card-header {
@@ -1267,14 +1291,14 @@
       }
 
       .loc-thumb {
-        width: 46px;
-        height: 46px;
-        border-radius: 8px;
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
         flex-shrink: 0;
       }
 
       .loc-name {
-        font-size: 0.86rem;
+        font-size: 0.88rem;
         font-weight: 700;
         line-height: 1.25;
         white-space: normal;
@@ -1288,21 +1312,21 @@
       }
 
       .location-item-card.expanded .loc-card-expanded {
-        max-height: 360px;
+        max-height: 420px;
       }
 
       .loc-expanded-inner {
-        padding: 10px;
-        gap: 8px;
+        padding: 12px;
+        gap: 10px;
       }
 
       .loc-expanded-img {
-        height: 120px;
+        height: 135px;
       }
 
       .loc-expanded-desc {
-        font-size: 0.78rem;
-        line-height: 1.4;
+        font-size: 0.80rem;
+        line-height: 1.45;
       }
 
       /* Mobile Map Pin Box Sizing */
@@ -2032,8 +2056,8 @@
                 <a href="${loc.googleMapsLink}" target="_blank" class="loc-expanded-maps-btn">
                   Google Maps <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
-                <button class="loc-expanded-close-btn" title="Close Details">
-                  Close <i class="fa-solid fa-xmark"></i>
+                <button class="loc-expanded-close-btn" title="Back to Locations">
+                  <i class="fa-solid fa-arrow-left"></i> Back
                 </button>
               </div>
             </div>
@@ -2044,23 +2068,42 @@
         const toggleBtn = card.querySelector('.loc-card-toggle');
         const closeBtn = card.querySelector('.loc-expanded-close-btn');
 
+        function handleCardSelection(isExplicitToggle) {
+          const isCurrentlyExpanded = card.classList.contains('expanded');
+          const isMobileOrTablet = window.innerWidth <= 1024;
+
+          if (isCurrentlyExpanded && isExplicitToggle) {
+            card.classList.remove('expanded', 'vfx-active-card');
+            locationListContainer.classList.remove('has-focused-card');
+            returnToOverview();
+          } else if (!isCurrentlyExpanded) {
+            document.querySelectorAll('.location-item-card').forEach(c => {
+              c.classList.remove('expanded', 'vfx-active-card');
+            });
+            card.classList.add('expanded');
+            if (isMobileOrTablet) {
+              locationListContainer.classList.add('has-focused-card');
+              categoryCardPanel.classList.add('sheet-expanded');
+            }
+            triggerCinematicVfxRoute(loc, marker, card);
+          }
+        }
+
         headerEl.addEventListener('click', (e) => {
-          if (e.target.closest('.loc-card-toggle')) return;
-          card.classList.toggle('expanded');
-          triggerCinematicVfxRoute(loc, marker, card);
+          if (e.target.closest('.loc-card-toggle') || e.target.closest('.loc-expanded-maps-btn') || e.target.closest('.loc-expanded-close-btn')) return;
+          handleCardSelection(true);
         });
 
         toggleBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          card.classList.toggle('expanded');
-          if (card.classList.contains('expanded')) {
-            triggerCinematicVfxRoute(loc, marker, card);
-          }
+          handleCardSelection(true);
         });
 
         closeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          card.classList.remove('expanded');
+          card.classList.remove('expanded', 'vfx-active-card');
+          locationListContainer.classList.remove('has-focused-card');
+          returnToOverview();
         });
 
         locationListContainer.appendChild(card);
@@ -2361,6 +2404,7 @@
       categoryMarkersMap.forEach(m => map.removeLayer(m));
       categoryMarkersMap.clear();
       activeSelectedLocation = null;
+      if (locationListContainer) locationListContainer.classList.remove('has-focused-card');
       clearRouteVisualsOnly();
     }
 
@@ -2370,6 +2414,7 @@
       mapHomeBtn.addEventListener('click', () => {
         mapInterfaceScreen.classList.remove('active');
         categoryCardPanel.classList.remove('open', 'sheet-expanded');
+        if (locationListContainer) locationListContainer.classList.remove('has-focused-card');
         navItems.forEach(i => i.classList.remove('active'));
         clearCategoryVisuals();
         portalScreen.classList.remove('hidden');
@@ -2381,7 +2426,7 @@
     const sheetDragHandle = document.getElementById('sheetDragHandle');
 
     function toggleMobileSheetExpand() {
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth <= 1024) {
         categoryCardPanel.classList.toggle('sheet-expanded');
       }
     }
@@ -2414,6 +2459,7 @@
     // RETURN TO OVERVIEW / RESET VIEW
     function returnToOverview() {
       activeSelectedLocation = null;
+      if (locationListContainer) locationListContainer.classList.remove('has-focused-card');
       document.querySelectorAll('.location-item-card').forEach(c => {
         c.classList.remove('vfx-active-card', 'expanded');
       });
@@ -2437,6 +2483,7 @@
 
     panelCloseBtn.addEventListener('click', () => {
       categoryCardPanel.classList.remove('open', 'sheet-expanded');
+      if (locationListContainer) locationListContainer.classList.remove('has-focused-card');
       navItems.forEach(i => i.classList.remove('active'));
       clearCategoryVisuals();
       map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
