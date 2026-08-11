@@ -1283,8 +1283,8 @@
 
       /* Compact Header Logo Overlay */
       .map-header-bar {
-        left: 16px;
-        top: calc(12px + var(--safe-top, 0px));
+        left: 14px;
+        top: calc(14px + var(--safe-top, 0px));
         padding: 8px 14px;
         font-size: 0.75rem;
       }
@@ -1292,7 +1292,7 @@
       /* Floating Horizontal Category Navigation Bar */
       .nav-panel {
         top: auto;
-        bottom: calc(16px + var(--safe-bottom, 0px));
+        bottom: calc(14px + var(--safe-bottom, 0px));
         left: 50%;
         transform: translateX(-50%);
         flex-direction: row;
@@ -1305,7 +1305,7 @@
         border: 1px solid var(--glass-border);
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75);
         z-index: 120;
-        max-width: calc(100vw - 32px);
+        max-width: calc(100vw - 28px);
         overflow-x: auto;
       }
 
@@ -1433,13 +1433,6 @@
         align-items: center;
       }
 
-      .loc-thumb {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-        flex-shrink: 0;
-      }
-
       .loc-name {
         font-size: 0.88rem;
         font-weight: 700;
@@ -1481,11 +1474,11 @@
         letter-spacing: 1px;
       }
 
-      /* Compact Reset View Button */
+      /* Compact Reset View Button for Mobile Ratios */
       .reset-view-btn {
         position: fixed;
-        left: 16px;
-        bottom: calc(75px + var(--safe-bottom, 0px));
+        left: 14px;
+        bottom: calc(72px + var(--safe-bottom, 0px));
         z-index: 105;
         padding: 8px 14px;
         font-size: 0.76rem;
@@ -1494,11 +1487,11 @@
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
       }
 
-      /* Compact Map Zoom Controls */
+      /* Compact Map Zoom Controls for Mobile Ratios */
       .map-controls {
         position: fixed;
-        right: 16px;
-        bottom: calc(75px + var(--safe-bottom, 0px));
+        right: 14px;
+        bottom: calc(72px + var(--safe-bottom, 0px));
         z-index: 105;
         gap: 6px;
       }
@@ -2124,6 +2117,21 @@
       });
     });
 
+    function getResponsiveMapPadding() {
+      const isMobileOrTablet = window.innerWidth <= 1024;
+      if (isMobileOrTablet) {
+        const bottomOffset = Math.round(window.innerHeight * 0.22);
+        return {
+          paddingBottomRight: [20, bottomOffset],
+          paddingTopLeft: [20, 50]
+        };
+      }
+      return {
+        paddingBottomRight: [440, 80],
+        paddingTopLeft: [100, 70]
+      };
+    }
+
     function showCategoryOnMap(categoryKey) {
       const catData = locationCategories[categoryKey];
       if (!catData) return;
@@ -2254,10 +2262,8 @@
       categoryCardPanel.classList.add('open');
       updateMarkersVisibility();
 
-      const isMobile = window.innerWidth <= 768;
-      const catPadRightBottom = isMobile ? [40, 180] : [460, 80];
-      const catPadTopLeft = isMobile ? [40, 40] : [120, 80];
-      map.flyToBounds(bounds, { paddingBottomRight: catPadRightBottom, paddingTopLeft: catPadTopLeft, duration: 1.8 });
+      const paddingObj = getResponsiveMapPadding();
+      map.flyToBounds(bounds, { paddingBottomRight: paddingObj.paddingBottomRight, paddingTopLeft: paddingObj.paddingTopLeft, duration: 1.8 });
     }
 
     // UPDATE MARKERS & LABELS VISIBILITY ACCORDING TO FOCUS MODE
@@ -2379,18 +2385,16 @@
 
       mapInterfaceScreen.classList.add('camera-moving');
 
-      const isMobile = window.innerWidth <= 768;
-      const vfxPadRightBottom = isMobile ? [40, 200] : [420, 70];
-      const vfxPadTopLeft = isMobile ? [40, 40] : [100, 70];
+      const paddingObj = getResponsiveMapPadding();
 
       if (prefersReducedMotion) {
-        map.fitBounds(focusBounds, { paddingBottomRight: vfxPadRightBottom, paddingTopLeft: vfxPadTopLeft });
+        map.fitBounds(focusBounds, { paddingBottomRight: paddingObj.paddingBottomRight, paddingTopLeft: paddingObj.paddingTopLeft });
         setTimeout(() => mapInterfaceScreen.classList.remove('camera-moving'), 300);
       } else {
         // Smooth camera transition to focus ONLY on selected route bounds
         map.flyToBounds(focusBounds, {
-          paddingBottomRight: vfxPadRightBottom,
-          paddingTopLeft: vfxPadTopLeft,
+          paddingBottomRight: paddingObj.paddingBottomRight,
+          paddingTopLeft: paddingObj.paddingTopLeft,
           duration: 1.6,
           easeLinearity: 0.25
         });
@@ -2589,17 +2593,15 @@
       clearRouteVisualsOnly();
       updateMarkersVisibility();
 
-      const isMobile = window.innerWidth <= 768;
-      const padRightBottom = isMobile ? [40, 180] : [460, 80];
-      const padTopLeft = isMobile ? [40, 40] : [120, 80];
+      const paddingObj = getResponsiveMapPadding();
 
       // Fit map back to last category view where user clicked, else to Aero Villas
       if (currentCategoryBounds) {
-        map.flyToBounds(currentCategoryBounds, { paddingBottomRight: padRightBottom, paddingTopLeft: padTopLeft, duration: 1.2 });
+        map.flyToBounds(currentCategoryBounds, { paddingBottomRight: paddingObj.paddingBottomRight, paddingTopLeft: paddingObj.paddingTopLeft, duration: 1.2 });
       } else if (categoryMarkersMap.size > 0) {
         const bounds = L.latLngBounds([AERO_VILLAS_COORDS]);
         categoryMarkersMap.forEach((_, loc) => bounds.extend(loc.coords));
-        map.flyToBounds(bounds, { paddingBottomRight: padRightBottom, paddingTopLeft: padTopLeft, duration: 1.2 });
+        map.flyToBounds(bounds, { paddingBottomRight: paddingObj.paddingBottomRight, paddingTopLeft: paddingObj.paddingTopLeft, duration: 1.2 });
       } else {
         map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.2 });
       }
