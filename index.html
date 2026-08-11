@@ -1329,13 +1329,31 @@
         line-height: 1.45;
       }
 
-      /* Mobile Map Pin Box Sizing */
-      .pin-card-box {
-        max-width: 170px;
-        font-size: 0.72rem;
-        padding: 6px 12px;
-        border-radius: 14px;
-        letter-spacing: 1px;
+      /* Clean Sleek Map Pin Marker on Mobile/Tablet (Hides White Box Overlap) */
+      .pin-card-box,
+      .pin-card-pointer {
+        display: none !important;
+      }
+
+      .custom-card-pin {
+        width: 24px !important;
+        height: 24px !important;
+        margin-left: -12px !important;
+        margin-top: -12px !important;
+      }
+
+      .custom-location-pin-card {
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.7));
+      }
+
+      .pin-card-dot {
+        margin-top: 0;
+        width: 20px;
+        height: 20px;
+        background: #E63946;
+        border: 3px solid #FFFFFF;
+        border-radius: 50%;
+        box-shadow: 0 0 16px rgba(212, 175, 55, 1), 0 0 8px rgba(230, 57, 70, 0.9);
       }
 
       /* Compact Reset View Button */
@@ -2029,8 +2047,22 @@
         categoryMarkersMap.set(loc, marker);
 
         marker.on('click', () => {
-          openLocationModal(loc);
-          triggerCinematicVfxRoute(loc, marker, null);
+          const isMobileOrTablet = window.innerWidth <= 1024;
+          const matchingCard = locationListContainer.querySelector(`[data-loc-name="${CSS.escape(loc.name)}"]`);
+          
+          document.querySelectorAll('.location-item-card').forEach(c => {
+            if (c === matchingCard) {
+              c.classList.add('expanded');
+              if (isMobileOrTablet) {
+                locationListContainer.classList.add('has-focused-card');
+                categoryCardPanel.classList.add('sheet-expanded');
+              }
+              triggerCinematicVfxRoute(loc, marker, c);
+              c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+              c.classList.remove('expanded', 'vfx-active-card');
+            }
+          });
         });
 
         // SIDE PANEL CARD ITEM
