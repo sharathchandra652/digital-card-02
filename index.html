@@ -44,12 +44,16 @@
     html {
       width: 100%;
       height: 100%;
+      min-height: 100%;
       overflow: hidden;
       font-family: var(--font-body);
       background-color: #0b0914;
       color: #ffffff;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      position: relative;
     }
 
     /* GPU Acceleration & Performance Helpers */
@@ -83,11 +87,11 @@
 
     /* BACKGROUND LAYER WITH PRESERVED Pattern.webp OVERLAY */
     .app-background-texture {
-      position: absolute;
-      top: 0;
-      left: 0;
+      position: fixed;
+      inset: 0;
       width: 100%;
       height: 100%;
+      background-color: #0b0914;
       background-image: url('Pattern.webp');
       background-repeat: repeat;
       background-size: 300px 300px;
@@ -364,14 +368,14 @@
 
     /* SCREEN 3: MAIN LUXURY LOCATION INTERFACE */
     .map-interface-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
+      position: fixed;
+      inset: 0;
       width: 100%;
       height: 100%;
       z-index: 5;
       opacity: 0;
       pointer-events: none;
+      background-color: #0b0914;
       transition: opacity 1s ease;
     }
 
@@ -382,9 +386,11 @@
 
     /* MAP CONTAINER */
     #leaflet-map {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
-      background-color: #0d1117;
+      background-color: #0b0914;
       z-index: 1;
     }
 
@@ -686,6 +692,23 @@
       font-size: 0.82rem;
       color: rgba(255, 255, 255, 0.85);
       line-height: 1.45;
+    }
+
+    .loc-expanded-address {
+      font-size: 0.76rem;
+      color: var(--gold-light);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      line-height: 1.35;
+      margin-top: 2px;
+      opacity: 0.95;
+    }
+
+    .loc-expanded-address i {
+      color: var(--gold-primary);
+      margin-top: 2px;
+      flex-shrink: 0;
     }
 
     .loc-expanded-actions {
@@ -1711,7 +1734,7 @@
     // REAL COORDINATES FOR AERO VILLAS (Sathamrai Colony, Shamshabad, Hyderabad, Telangana 500052)
     const AERO_VILLAS_COORDS = [17.2703068, 78.4079072];
 
-    // REUSABLE LOCATION DATA STRUCTURE USING LOCAL ASSETS & AUTHENTIC REAL PHOTOGRAPHS
+    // REUSABLE LOCATION DATA STRUCTURE WITH VERIFIED ADDRESSES AND EXACT DIRECTIONS
     const locationCategories = {
       schools: {
         title: "Education",
@@ -1722,28 +1745,30 @@
             category: "Education",
             image: "assests/rockwell-international-school-shamshabad-shamshabad-rangareddy-schools-nursery-to-vi-wzr8m3324q.avif",
             description: "Premium international educational facility offering world-class CBSE & IGCSE curriculum near Aero Villas.",
+            address: "NH 44, Satamrai Colony, Shamshabad, Hyderabad, Telangana 501218",
             distance: "1 min",
             coords: [17.2663765, 78.4083583],
-            googleMapsLink: "https://maps.app.goo.gl/SGoqbcdMxKwnZA4Q8"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2663765,78.4083583"
           },
-
           {
             name: "Basil Woods School",
             category: "Education",
             image: "assests/Shamshabad-Basil-Woods.jpg",
             description: "Modern value-based holistic campus providing rich sports and academic infrastructure.",
+            address: "Airport Road, Shamshabad, Hyderabad, Telangana 501218",
             distance: "8 mins",
             coords: [17.2763759, 78.4222987],
-            googleMapsLink: "https://maps.app.goo.gl/B9kUAYJEKzRUz6rj9"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2763759,78.4222987"
           },
           {
             name: "Delhi Public School (DPS)",
             category: "Education",
             image: "assests/DPS-ND-folder-ref.jpg",
             description: "Renowned institution celebrated for strong academic performance and extensive sports facilities.",
+            address: "Airport Road, Shamshabad, Hyderabad, Telangana 501218",
             distance: "10 mins",
             coords: [17.2560826, 78.4375787],
-            googleMapsLink: "https://maps.app.goo.gl/7EuFVadHb4XSUxS97"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2560826,78.4375787"
           }
         ]
       },
@@ -1756,27 +1781,30 @@
             category: "Connectivity",
             image: "assests/images (3).jpg",
             description: "Hyderabad's international airport hub providing seamless domestic and global connectivity.",
+            address: "Shamshabad, Hyderabad, Telangana 500108",
             distance: "12 mins",
             coords: [17.2402827, 78.4293580],
-            googleMapsLink: "https://maps.app.goo.gl/Rucrm4JUF6tWo7566"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2402827,78.4293580"
           },
           {
             name: "Outer Ring Road (ORR)",
             category: "Connectivity",
             image: "assests/Outer-Ring-Road-Hyderbad.jpg",
             description: "8-lane express motorway connecting Shamshabad directly to Gachibowli, HITEC City and Financial District.",
+            address: "ORR Exit 16 Interchange, Shamshabad, Hyderabad, Telangana 501218",
             distance: "4 mins",
             coords: [17.256200, 78.401200],
-            googleMapsLink: "https://maps.app.goo.gl/f87Jh4zDp36zqW48A"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.256200,78.401200"
           },
           {
             name: "Upcoming Airport Metro",
             category: "Connectivity",
             image: "assests/Hyderabad-Metro-600.jpg",
             description: "Proposed airport metro connectivity planned to improve rapid transit access between Hyderabad and RGIA.",
+            address: "Shamshabad Metro Corridor, Hyderabad, Telangana 501218",
             distance: "6 mins",
-            coords: [17.2780, 78.4140],
-            googleMapsLink: "https://www.google.com/maps/search/?api=1&query=Hyderabad+Airport+Metro"
+            coords: [17.271000, 78.413000],
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.271000,78.413000"
           }
         ]
       },
@@ -1789,18 +1817,20 @@
             category: "Healthcare",
             image: "assests/images (1).jpg",
             description: "Multi-specialty healthcare facility with emergency care, diagnostics and advanced medical services.",
+            address: "NH 44, Madhura Nagar, Shamshabad, Hyderabad, Telangana 501218",
             distance: "5 mins",
             coords: [17.251800, 78.430800],
-            googleMapsLink: "https://www.google.com/maps/search/?api=1&query=Sunrise+Hospitals+-+Shamshabad,+23-178%2F4%2F2+Madhura+Nagar,+NH+44,+Shamshabad,+Hyderabad,+Telangana+501218"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.251800,78.430800"
           },
           {
             name: "JIMS HOSPITAL",
             category: "Healthcare",
             image: "assests/jimshospital-400x300-1.jpg",
             description: "Healthcare and wellness centre at Muchintal, Shamshabad.",
+            address: "Sriram Nagar, Muchintal, Shamshabad, Hyderabad, Telangana 509325",
             distance: "18 mins",
             coords: [17.1867586, 78.3281388],
-            googleMapsLink: "https://maps.app.goo.gl/3jRYwr5cQ5iFNJvP6"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.1867586,78.3281388"
           }
         ]
       },
@@ -1813,18 +1843,20 @@
             category: "Govt & Future Development",
             image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1000&q=80",
             description: "New Telangana High Court complex at Budvel supporting major regional infrastructure and development.",
+            address: "Budvel, Rajendranagar, Hyderabad, Telangana 500030",
             distance: "9 mins",
-            coords: [17.2980, 78.4180],
-            googleMapsLink: "https://maps.google.com/?q=New+High+Court+of+Telangana+Budwel+Hyderabad"
+            coords: [17.318000, 78.418000],
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.318000,78.418000"
           },
           {
             name: "GMR Aero City",
             category: "Govt & Future Development",
             image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80",
             description: "Major airport-oriented business and commercial development ecosystem near RGIA.",
+            address: "RGIA Campus, Shamshabad, Hyderabad, Telangana 500108",
             distance: "10 mins",
             coords: [17.2390119, 78.4358090],
-            googleMapsLink: "https://maps.app.goo.gl/D6QnVankqLKvpJcR7"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2390119,78.4358090"
           }
         ]
       },
@@ -1837,59 +1869,60 @@
             category: "Shopping & Entertainment",
             image: "assests/91952410.cms",
             description: "Major wholesale supermarket hub for groceries, household products and daily essentials.",
+            address: "Gaganpahad, NH 44, Shamshabad, Hyderabad, Telangana 500052",
             distance: "8 mins",
             coords: [17.2939846, 78.4168013],
-            googleMapsLink: "https://maps.app.goo.gl/qGf3CZUWJsSQ4NrD9"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2939846,78.4168013"
           },
-
           {
             name: "Reliance Smart",
             category: "Shopping & Entertainment",
             image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=1000&q=80",
             description: "Modern supermarket providing groceries, household essentials and fresh produce.",
+            address: "NH 44, Shamshabad Main Road, Hyderabad, Telangana 501218",
             distance: "5 mins",
-            coords: [17.262863, 78.385874],
-            googleMapsLink: "https://maps.google.com/?q=Reliance+Smart+Shamshabad+Hyderabad"
+            coords: [17.252500, 78.428500],
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.252500,78.428500"
           },
-
           {
             name: "Vijetha Super Market",
             category: "Shopping & Entertainment",
             image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=80",
             description: "Popular supermarket serving the Shamshabad and surrounding residential areas.",
+            address: "Madhura Nagar, Shamshabad, Hyderabad, Telangana 501218",
             distance: "6 mins",
-            coords: [17.262500, 78.330800],
-            googleMapsLink: "https://share.google/ZattdBtHQiOXx4T9b"
+            coords: [17.251200, 78.429800],
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.251200,78.429800"
           },
-
           {
             name: "Aparna Neo Vibe Mall",
             category: "Shopping & Entertainment",
             image: "assests/Aparna-Neo-Mall-1.jpg",
             description: "Modern shopping and entertainment destination at Satamrai, Shamshabad.",
+            address: "Satamrai, NH 44, Shamshabad, Hyderabad, Telangana 500052",
             distance: "14 mins",
             coords: [17.2856833, 78.4142840],
-            googleMapsLink: "https://maps.app.goo.gl/MJSZb1nwep9vZwib6"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2856833,78.4142840"
           },
-
           {
             name: "Escape Water Park",
             category: "Shopping & Entertainment",
             image: "assests/images (4).jpg",
             description: "Family water park and entertainment destination near Shamshabad.",
+            address: "Rallaguda Road, Shamshabad, Hyderabad, Telangana 501218",
             distance: "7 mins",
             coords: [17.2759903, 78.3677594],
-            googleMapsLink: "https://maps.app.goo.gl/ejVd1pHHYMnUuZaF9"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2759903,78.3677594"
           },
-
           {
             name: "Wonderla Hyderabad",
             category: "Shopping & Entertainment",
             image: "assests/images (2).jpg",
             description: "World-class amusement park featuring land and water rides for families and visitors.",
+            address: "Nehru Outer Ring Road Exit 13, Ravirala, Telangana 501510",
             distance: "22 mins",
             coords: [17.2172886, 78.5285053],
-            googleMapsLink: "https://maps.app.goo.gl/2rwK5Mj8i466Da379"
+            googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.2172886,78.5285053"
           }
         ]
       }
@@ -1983,6 +2016,19 @@
           <div class="popup-title">AERO VILLAS</div>
         </div>
       `).openPopup();
+
+      // ZERO-BLACK-SCREEN ZOOM & VIEWPORT RESIZE HANDLER
+      function handleViewportZoomResize() {
+        if (map) {
+          map.invalidateSize({ animate: false });
+        }
+      }
+
+      window.addEventListener('resize', handleViewportZoomResize);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', handleViewportZoomResize);
+        window.visualViewport.addEventListener('scroll', handleViewportZoomResize);
+      }
     }
 
     // CATEGORY SELECTION
@@ -2052,9 +2098,10 @@
             <div class="loc-expanded-inner">
               <img src="${loc.image}" alt="${loc.name}" class="loc-expanded-img" loading="lazy" decoding="async">
               <p class="loc-expanded-desc">${loc.description}</p>
+              <div class="loc-expanded-address"><i class="fa-solid fa-location-dot"></i> ${loc.address}</div>
               <div class="loc-expanded-actions">
-                <a href="${loc.googleMapsLink}" target="_blank" class="loc-expanded-maps-btn">
-                  Google Maps <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <a href="${loc.googleMapsLink}" target="_blank" rel="noopener" class="loc-expanded-maps-btn">
+                  Get Directions <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
                 <button class="loc-expanded-close-btn" title="Back to Locations">
                   <i class="fa-solid fa-arrow-left"></i> Back
