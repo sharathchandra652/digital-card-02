@@ -366,6 +366,126 @@
       transition: width 3s linear;
     }
 
+    /* FLUID RESPONSIVE RATIOS FOR FRONT PAGE (.portal-screen) AND WELCOME SCREEN (.cinematic-screen) */
+    @media (max-width: 768px) {
+      .portal-screen,
+      .cinematic-screen {
+        padding: 20px 16px;
+      }
+
+      .digital-card-container {
+        max-width: 100%;
+        gap: 24px;
+      }
+
+      .card-brand-title {
+        font-size: clamp(2.2rem, 9vw, 3.2rem);
+        letter-spacing: clamp(4px, 2vw, 8px);
+      }
+
+      .card-brand-subtitle {
+        font-size: clamp(1.1rem, 4.5vw, 1.5rem);
+        letter-spacing: clamp(5px, 2.5vw, 10px);
+        margin-bottom: 12px;
+      }
+
+      .card-tagline {
+        max-width: 280px;
+      }
+
+      .tagline-text {
+        font-size: 0.70rem;
+        letter-spacing: 1.5px;
+      }
+
+      .trigger-card {
+        padding: 24px 32px;
+        border-radius: 20px;
+        width: 100%;
+        max-width: 340px;
+      }
+
+      .location-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 12px;
+      }
+
+      .trigger-label {
+        font-size: 1.05rem;
+        letter-spacing: 2px;
+      }
+
+      .cinematic-content {
+        padding: 0 20px;
+        width: 100%;
+      }
+
+      .cinematic-welcome {
+        font-size: clamp(1.2rem, 5vw, 1.6rem);
+        letter-spacing: clamp(2px, 1vw, 4px);
+      }
+
+      .cinematic-title {
+        font-size: clamp(2.2rem, 9.5vw, 3.6rem);
+        letter-spacing: clamp(4px, 2.5vw, 10px);
+        margin-top: 16px;
+      }
+
+      .cinematic-subtitle {
+        font-size: clamp(0.85rem, 3.5vw, 1.05rem);
+        letter-spacing: clamp(1.5px, 1vw, 3px);
+        margin-top: 8px;
+      }
+
+      .cinematic-progress-bar {
+        width: 180px;
+        margin-top: 28px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card-brand-title {
+        font-size: clamp(1.9rem, 8.5vw, 2.5rem);
+        letter-spacing: 4px;
+      }
+
+      .card-brand-subtitle {
+        font-size: clamp(0.95rem, 4vw, 1.25rem);
+        letter-spacing: 6px;
+      }
+
+      .trigger-card {
+        padding: 20px 24px;
+        max-width: 290px;
+      }
+
+      .location-icon-wrapper {
+        width: 60px;
+        height: 60px;
+      }
+
+      .trigger-label {
+        font-size: 0.95rem;
+        letter-spacing: 1.5px;
+      }
+
+      .cinematic-welcome {
+        font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+        letter-spacing: 2px;
+      }
+
+      .cinematic-title {
+        font-size: clamp(1.85rem, 8vw, 2.5rem);
+        letter-spacing: 5px;
+      }
+
+      .cinematic-subtitle {
+        font-size: clamp(0.78rem, 3.2vw, 0.92rem);
+        letter-spacing: 1.5px;
+      }
+    }
+
     /* SCREEN 3: MAIN LUXURY LOCATION INTERFACE */
     .map-interface-screen {
       position: fixed;
@@ -1701,34 +1821,7 @@
     <div id="leaflet-map"></div>
   </div>
 
-  <!-- DETAILED LOCATION EXPLORER CARD / MODAL -->
-  <div id="locationModalBackdrop" class="location-modal-backdrop">
-    <div class="location-modal-card">
-      <div class="modal-close-btn" id="modalCloseBtn">
-        <i class="fa-solid fa-xmark"></i>
-      </div>
-      <div class="modal-image-container">
-        <img id="modalImage" class="modal-image" src="" alt="Location Photograph">
-        <div class="modal-badge-overlay">
-          <i class="fa-solid fa-compass"></i>
-          <span id="modalDistanceBadge"></span>
-        </div>
-      </div>
-      <div class="modal-body">
-        <h3 id="modalTitle" class="modal-title"></h3>
-        <p id="modalDescription" class="modal-description"></p>
-        <div class="modal-meta-row">
-          <div class="modal-distance">
-            <span class="modal-distance-label">Travel Time from Aero Villas</span>
-            <span id="modalDistanceText" class="modal-distance-value"></span>
-          </div>
-          <a id="modalMapsLink" href="#" target="_blank" class="modal-maps-btn">
-            View Location <i class="fa-solid fa-arrow-up-right-from-square"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <script>
     // REAL COORDINATES FOR AERO VILLAS (Sathamrai Colony, Shamshabad, Hyderabad, Telangana 500052)
@@ -1881,7 +1974,7 @@
             description: "Modern supermarket providing groceries, household essentials and fresh produce.",
             address: "NH 44, Shamshabad Main Road, Hyderabad, Telangana 501218",
             distance: "5 mins",
-            coords: [17.252500, 78.428500],
+            coords: [17.262863, 78.385874],
             googleMapsLink: "https://www.google.com/maps/dir/?api=1&origin=17.2703068,78.4079072&destination=17.252500,78.428500"
           },
           {
@@ -1934,6 +2027,7 @@
     let currentVfxAnimationId = null;
     let currentParticleAnimationId = null;
     let activeSelectedLocation = null; // FOCUS MODE STATE: null means Overview Mode
+    let currentCategoryBounds = null; // Stores bounds of current selected category for smart Back navigation
     const routeGeometryCache = new Map();
 
     // DOM ELEMENTS
@@ -1949,15 +2043,7 @@
     const panelCloseBtn = document.getElementById('panelCloseBtn');
     const resetViewBtn = document.getElementById('resetViewBtn');
 
-    // MODAL ELEMENTS
-    const locationModalBackdrop = document.getElementById('locationModalBackdrop');
-    const modalCloseBtn = document.getElementById('modalCloseBtn');
-    const modalImage = document.getElementById('modalImage');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDescription = document.getElementById('modalDescription');
-    const modalDistanceBadge = document.getElementById('modalDistanceBadge');
-    const modalDistanceText = document.getElementById('modalDistanceText');
-    const modalMapsLink = document.getElementById('modalMapsLink');
+
 
     // SCREEN TRANSITION LOGIC
     startLocationBtn.addEventListener('click', () => {
@@ -2011,11 +2097,6 @@
       });
 
       aeroMarker = L.marker(AERO_VILLAS_COORDS, { icon: aeroIcon }).addTo(map);
-      aeroMarker.bindPopup(`
-        <div style="text-align:center;">
-          <div class="popup-title">AERO VILLAS</div>
-        </div>
-      `).openPopup();
 
       // ZERO-BLACK-SCREEN ZOOM & VIEWPORT RESIZE HANDLER
       function handleViewportZoomResize() {
@@ -2075,8 +2156,22 @@
         categoryMarkersMap.set(loc, marker);
 
         marker.on('click', () => {
-          openLocationModal(loc);
-          triggerCinematicVfxRoute(loc, marker, null);
+          const isMobileOrTablet = window.innerWidth <= 1024;
+          const matchingCard = locationListContainer.querySelector(`[data-loc-name="${CSS.escape(loc.name)}"]`);
+
+          document.querySelectorAll('.location-item-card').forEach(c => {
+            if (c === matchingCard) {
+              c.classList.add('expanded');
+              if (isMobileOrTablet) {
+                locationListContainer.classList.add('has-focused-card');
+                categoryCardPanel.classList.add('sheet-expanded');
+              }
+              triggerCinematicVfxRoute(loc, marker, c);
+              c.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+              c.classList.remove('expanded', 'vfx-active-card');
+            }
+          });
         });
 
         // SIDE PANEL CARD ITEM
@@ -2085,7 +2180,6 @@
         card.setAttribute('data-loc-name', loc.name);
         card.innerHTML = `
           <div class="loc-card-header">
-            <img src="${loc.image}" alt="${loc.name}" class="loc-thumb" loading="lazy" decoding="async">
             <div class="loc-info">
               <div class="loc-name">${loc.name}</div>
               <div class="loc-badge-inline">${loc.distance}</div>
@@ -2156,6 +2250,7 @@
         locationListContainer.appendChild(card);
       });
 
+      currentCategoryBounds = bounds;
       categoryCardPanel.classList.add('open');
       updateMarkersVisibility();
 
@@ -2413,26 +2508,7 @@
       }
     }
 
-    function openLocationModal(loc) {
-      modalImage.src = loc.image;
-      modalTitle.innerText = loc.name;
-      modalDescription.innerText = loc.description;
-      modalDistanceBadge.innerText = loc.distance;
-      modalDistanceText.innerText = loc.distance;
-      modalMapsLink.href = loc.googleMapsLink;
 
-      locationModalBackdrop.classList.add('active');
-    }
-
-    modalCloseBtn.addEventListener('click', () => {
-      locationModalBackdrop.classList.remove('active');
-    });
-
-    locationModalBackdrop.addEventListener('click', (e) => {
-      if (e.target === locationModalBackdrop) {
-        locationModalBackdrop.classList.remove('active');
-      }
-    });
 
     function clearRouteVisualsOnly() {
       if (currentVfxAnimationId) {
@@ -2503,7 +2579,7 @@
       }, { passive: true });
     }
 
-    // RETURN TO OVERVIEW / RESET VIEW
+    // RETURN TO LAST CLICKED CATEGORY VIEW / RESET VIEW
     function returnToOverview() {
       activeSelectedLocation = null;
       if (locationListContainer) locationListContainer.classList.remove('has-focused-card');
@@ -2517,15 +2593,16 @@
       const padRightBottom = isMobile ? [40, 180] : [460, 80];
       const padTopLeft = isMobile ? [40, 40] : [120, 80];
 
-      // Fit map back to all category markers if active, else to Aero Villas
-      if (categoryMarkersMap.size > 0) {
+      // Fit map back to last category view where user clicked, else to Aero Villas
+      if (currentCategoryBounds) {
+        map.flyToBounds(currentCategoryBounds, { paddingBottomRight: padRightBottom, paddingTopLeft: padTopLeft, duration: 1.2 });
+      } else if (categoryMarkersMap.size > 0) {
         const bounds = L.latLngBounds([AERO_VILLAS_COORDS]);
         categoryMarkersMap.forEach((_, loc) => bounds.extend(loc.coords));
-        map.flyToBounds(bounds, { paddingBottomRight: padRightBottom, paddingTopLeft: padTopLeft, duration: 1.5 });
+        map.flyToBounds(bounds, { paddingBottomRight: padRightBottom, paddingTopLeft: padTopLeft, duration: 1.2 });
       } else {
-        map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.5 });
+        map.flyTo(AERO_VILLAS_COORDS, 14, { duration: 1.2 });
       }
-      if (aeroMarker) aeroMarker.openPopup();
     }
 
     panelCloseBtn.addEventListener('click', () => {
