@@ -37,7 +37,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body,
@@ -48,6 +48,37 @@
       font-family: var(--font-body);
       background-color: #0b0914;
       color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* GPU Acceleration & Performance Helpers */
+    .category-card-panel,
+    .nav-panel,
+    .location-modal-card,
+    .map-header-bar,
+    .reset-view-btn,
+    .map-controls,
+    #leaflet-map {
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    @keyframes energyFlowDash {
+      from {
+        stroke-dashoffset: 24;
+      }
+
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .vfx-animated-dash {
+      stroke-dasharray: 10 10 !important;
+      animation: energyFlowDash 1.2s linear infinite !important;
+      will-change: stroke-dashoffset;
     }
 
     /* BACKGROUND LAYER WITH PRESERVED Pattern.webp OVERLAY */
@@ -405,9 +436,9 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: rgba(18, 14, 34, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid var(--glass-border);
       padding: 16px 12px;
       border-radius: 24px;
@@ -480,9 +511,9 @@
       width: 420px;
       max-height: calc(100vh - 140px);
       z-index: 100;
-      background: var(--glass-bg);
-      backdrop-filter: blur(25px);
-      -webkit-backdrop-filter: blur(25px);
+      background: rgba(18, 14, 34, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--glass-border);
       border-radius: 20px;
       padding: 20px;
@@ -491,8 +522,11 @@
       flex-direction: column;
       gap: 16px;
       overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      scroll-behavior: smooth;
       transform: translateX(470px);
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .category-card-panel.open {
@@ -1152,19 +1186,19 @@
         right: 0;
         width: 100vw;
         height: auto;
-        max-height: calc(44dvh + var(--safe-bottom));
+        max-height: calc(52dvh + var(--safe-bottom, 0px));
         z-index: 110;
         border-radius: 24px 24px 0 0;
         border: 1px solid var(--glass-border);
         border-bottom: none;
-        padding: 10px 14px calc(14px + var(--safe-bottom)) 14px;
+        padding: 10px 14px calc(14px + var(--safe-bottom, 0px)) 14px;
         transform: translateY(100%);
         transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex;
         flex-direction: column;
         gap: 8px;
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85);
-        overflow: hidden; /* Header fixed, list handles scrolling */
+        overflow: hidden;
       }
 
       .category-card-panel.open {
@@ -1172,7 +1206,7 @@
       }
 
       .category-card-panel.sheet-expanded {
-        max-height: calc(72dvh + var(--safe-bottom));
+        max-height: calc(84dvh + var(--safe-bottom, 0px));
       }
 
       .category-card-panel.sheet-expanded .panel-expand-toggle i {
@@ -1182,11 +1216,11 @@
       /* Bottom Sheet Drag Handle */
       .sheet-drag-handle {
         display: block;
-        width: 36px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.35);
+        width: 40px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.4);
         border-radius: 3px;
-        margin: 0 auto 2px auto;
+        margin: 0 auto 4px auto;
         cursor: grab;
         flex-shrink: 0;
       }
@@ -1215,7 +1249,10 @@
         overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: calc(76px + var(--safe-bottom)); /* Full scroll space above floating nav */
+        touch-action: pan-y;
+        overscroll-behavior: contain;
+        scroll-behavior: smooth;
+        padding-bottom: calc(76px + var(--safe-bottom, 0px));
       }
 
       .location-item-card {
@@ -1224,20 +1261,20 @@
       }
 
       .loc-card-header {
-        padding: 8px 10px;
+        padding: 10px 12px;
         gap: 10px;
         align-items: center;
       }
 
       .loc-thumb {
-        width: 44px;
-        height: 44px;
+        width: 46px;
+        height: 46px;
         border-radius: 8px;
         flex-shrink: 0;
       }
 
       .loc-name {
-        font-size: 0.84rem;
+        font-size: 0.86rem;
         font-weight: 700;
         line-height: 1.25;
         white-space: normal;
@@ -1251,7 +1288,7 @@
       }
 
       .location-item-card.expanded .loc-card-expanded {
-        max-height: 300px;
+        max-height: 360px;
       }
 
       .loc-expanded-inner {
@@ -1260,7 +1297,7 @@
       }
 
       .loc-expanded-img {
-        height: 115px;
+        height: 120px;
       }
 
       .loc-expanded-desc {
@@ -1268,11 +1305,20 @@
         line-height: 1.4;
       }
 
+      /* Mobile Map Pin Box Sizing */
+      .pin-card-box {
+        max-width: 170px;
+        font-size: 0.72rem;
+        padding: 6px 12px;
+        border-radius: 14px;
+        letter-spacing: 1px;
+      }
+
       /* Compact Reset View Button */
       .reset-view-btn {
         position: fixed;
         left: 16px;
-        bottom: calc(75px + var(--safe-bottom));
+        bottom: calc(75px + var(--safe-bottom, 0px));
         z-index: 105;
         padding: 8px 14px;
         font-size: 0.76rem;
@@ -1285,7 +1331,7 @@
       .map-controls {
         position: fixed;
         right: 16px;
-        bottom: calc(75px + var(--safe-bottom));
+        bottom: calc(75px + var(--safe-bottom, 0px));
         z-index: 105;
         gap: 6px;
       }
@@ -1638,8 +1684,8 @@
   </div>
 
   <script>
-    // REAL COORDINATES FOR AERO VILLAS & NEARBY LANDMARKS (Shamshabad / Sathamrai, Hyderabad)
-    const AERO_VILLAS_COORDS = [17.2642, 78.4112];
+    // REAL COORDINATES FOR AERO VILLAS (Sathamrai Colony, Shamshabad, Hyderabad, Telangana 500052)
+    const AERO_VILLAS_COORDS = [17.2703068, 78.4079072];
 
     // REUSABLE LOCATION DATA STRUCTURE USING LOCAL ASSETS & AUTHENTIC REAL PHOTOGRAPHS
     const locationCategories = {
@@ -1653,25 +1699,26 @@
             image: "assests/rockwell-international-school-shamshabad-shamshabad-rangareddy-schools-nursery-to-vi-wzr8m3324q.avif",
             description: "Premium international educational facility offering world-class CBSE & IGCSE curriculum near Aero Villas.",
             distance: "1 min",
-            coords: [17.2580, 78.4210],
+            coords: [17.2663765, 78.4083583],
             googleMapsLink: "https://maps.app.goo.gl/SGoqbcdMxKwnZA4Q8"
           },
+
           {
             name: "Basil Woods School",
             category: "Education",
             image: "assests/Shamshabad-Basil-Woods.jpg",
             description: "Modern value-based holistic campus providing rich sports and academic infrastructure.",
             distance: "8 mins",
-            coords: [17.2750, 78.4280],
+            coords: [17.2763759, 78.4222987],
             googleMapsLink: "https://maps.app.goo.gl/B9kUAYJEKzRUz6rj9"
           },
           {
             name: "Delhi Public School (DPS)",
             category: "Education",
             image: "assests/DPS-ND-folder-ref.jpg",
-            description: "Renowned institution celebrated for top academic track record and extensive sports grounds.",
+            description: "Renowned institution celebrated for strong academic performance and extensive sports facilities.",
             distance: "10 mins",
-            coords: [17.2480, 78.4450],
+            coords: [17.2560826, 78.4375787],
             googleMapsLink: "https://maps.app.goo.gl/7EuFVadHb4XSUxS97"
           }
         ]
@@ -1684,28 +1731,28 @@
             name: "Rajiv Gandhi International Airport",
             category: "Connectivity",
             image: "assests/images (3).jpg",
-            description: "Hyderabad's award-winning international airport hub providing quick seamless global travel.",
+            description: "Hyderabad's international airport hub providing seamless domestic and global connectivity.",
             distance: "12 mins",
-            coords: [17.2403, 78.4294],
+            coords: [17.2402827, 78.4293580],
             googleMapsLink: "https://maps.app.goo.gl/Rucrm4JUF6tWo7566"
           },
           {
             name: "Outer Ring Road (ORR)",
             category: "Connectivity",
             image: "assests/Outer-Ring-Road-Hyderbad.jpg",
-            description: "8-lane express motorway connecting Shamshabad directly to Gachibowli, HITEC City & Financial District.",
+            description: "8-lane express motorway connecting Shamshabad directly to Gachibowli, HITEC City and Financial District.",
             distance: "4 mins",
-            coords: [17.2530, 78.4010],
+            coords: [17.256200, 78.401200],
             googleMapsLink: "https://maps.app.goo.gl/f87Jh4zDp36zqW48A"
           },
           {
-            name: "Upcoming Metro Station",
+            name: "Upcoming Airport Metro",
             category: "Connectivity",
             image: "assests/Hyderabad-Metro-600.jpg",
-            description: "Phase II Airport Express Metro line connection ensuring rapid transit across the city.",
+            description: "Proposed airport metro connectivity planned to improve rapid transit access between Hyderabad and RGIA.",
             distance: "6 mins",
             coords: [17.2780, 78.4140],
-            googleMapsLink: "https://maps.app.goo.gl/SGoqbcdMxKwnZA4Q8"
+            googleMapsLink: "https://www.google.com/maps/search/?api=1&query=Hyderabad+Airport+Metro"
           }
         ]
       },
@@ -1717,18 +1764,18 @@
             name: "Sunrise Hospital",
             category: "Healthcare",
             image: "assests/images (1).jpg",
-            description: "Multi-specialty healthcare facility with 24/7 emergency response and advanced diagnostics.",
+            description: "Multi-specialty healthcare facility with emergency care, diagnostics and advanced medical services.",
             distance: "5 mins",
-            coords: [17.2510, 78.3980],
-            googleMapsLink: "https://maps.google.com/?q=Sunrise+Hospital+Shamshabad+Hyderabad"
+            coords: [17.251800, 78.430800],
+            googleMapsLink: "https://www.google.com/maps/search/?api=1&query=Sunrise+Hospitals+-+Shamshabad,+23-178%2F4%2F2+Madhura+Nagar,+NH+44,+Shamshabad,+Hyderabad,+Telangana+501218"
           },
           {
             name: "JIMS HOSPITAL",
             category: "Healthcare",
             image: "assests/jimshospital-400x300-1.jpg",
-            description: "Spiritual and holistic healthcare wellness center campus at Muchintal, Shamshabad.",
+            description: "Healthcare and wellness centre at Muchintal, Shamshabad.",
             distance: "18 mins",
-            coords: [17.1855, 78.3970],
+            coords: [17.1867586, 78.3281388],
             googleMapsLink: "https://maps.app.goo.gl/3jRYwr5cQ5iFNJvP6"
           }
         ]
@@ -1741,7 +1788,7 @@
             name: "New Telangana High Court",
             category: "Govt & Future Development",
             image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1000&q=80",
-            description: "Upcoming flagship High Court complex driving immense regional growth and commercial land valuation.",
+            description: "New Telangana High Court complex at Budvel supporting major regional infrastructure and development.",
             distance: "9 mins",
             coords: [17.2980, 78.4180],
             googleMapsLink: "https://maps.google.com/?q=New+High+Court+of+Telangana+Budwel+Hyderabad"
@@ -1750,9 +1797,9 @@
             name: "GMR Aero City",
             category: "Govt & Future Development",
             image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=80",
-            description: "Future Development: 1500-acre mega business district, IT towers, commercial & retail ecosystem.",
+            description: "Major airport-oriented business and commercial development ecosystem near RGIA.",
             distance: "10 mins",
-            coords: [17.2350, 78.4350],
+            coords: [17.2390119, 78.4358090],
             googleMapsLink: "https://maps.app.goo.gl/D6QnVankqLKvpJcR7"
           }
         ]
@@ -1765,54 +1812,59 @@
             name: "Metro Cash & Carry",
             category: "Shopping & Entertainment",
             image: "assests/91952410.cms",
-            description: "Major wholesale supermarket hub for premium groceries and daily essentials.",
+            description: "Major wholesale supermarket hub for groceries, household products and daily essentials.",
             distance: "8 mins",
-            coords: [17.2880, 78.4120],
+            coords: [17.2939846, 78.4168013],
             googleMapsLink: "https://maps.app.goo.gl/qGf3CZUWJsSQ4NrD9"
           },
+
           {
             name: "Reliance Smart",
             category: "Shopping & Entertainment",
             image: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=1000&q=80",
-            description: "Modern supermarket chain providing daily groceries, household essentials & fresh produce.",
+            description: "Modern supermarket providing groceries, household essentials and fresh produce.",
             distance: "5 mins",
-            coords: [17.2610, 78.3965],
+            coords: [17.262863, 78.385874],
             googleMapsLink: "https://maps.google.com/?q=Reliance+Smart+Shamshabad+Hyderabad"
           },
+
           {
             name: "Vijetha Super Market",
             category: "Shopping & Entertainment",
             image: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1000&q=80",
-            description: "Popular local supermarket hub located on Rallaguda Road near Shamshabad Bus Stand.",
+            description: "Popular supermarket serving the Shamshabad and surrounding residential areas.",
             distance: "6 mins",
-            coords: [17.2625, 78.3880],
+            coords: [17.262500, 78.330800],
             googleMapsLink: "https://share.google/ZattdBtHQiOXx4T9b"
           },
+
           {
-            name: "Aparna Neo Mall",
+            name: "Aparna Neo Vibe Mall",
             category: "Shopping & Entertainment",
             image: "assests/Aparna-Neo-Mall-1.jpg",
-            description: "Luxury retail shopping mall featuring premium fashion brands, fine dining, and multiplex cinema.",
+            description: "Modern shopping and entertainment destination at Satamrai, Shamshabad.",
             distance: "14 mins",
-            coords: [17.3050, 78.4020],
+            coords: [17.2856833, 78.4142840],
             googleMapsLink: "https://maps.app.goo.gl/MJSZb1nwep9vZwib6"
           },
+
           {
             name: "Escape Water Park",
             category: "Shopping & Entertainment",
             image: "assests/images (4).jpg",
-            description: "High-thrill family resort and water sports destination right near Shamshabad.",
+            description: "Family water park and entertainment destination near Shamshabad.",
             distance: "7 mins",
-            coords: [17.2710, 78.3890],
+            coords: [17.2759903, 78.3677594],
             googleMapsLink: "https://maps.app.goo.gl/ejVd1pHHYMnUuZaF9"
           },
+
           {
             name: "Wonderla Hyderabad",
             category: "Shopping & Entertainment",
             image: "assests/images (2).jpg",
-            description: "World-class amusement park with over 40 land and water rides.",
+            description: "World-class amusement park featuring land and water rides for families and visitors.",
             distance: "22 mins",
-            coords: [17.2180, 78.5380],
+            coords: [17.2172886, 78.5285053],
             googleMapsLink: "https://maps.app.goo.gl/2rwK5Mj8i466Da379"
           }
         ]
@@ -1877,16 +1929,20 @@
         attributionControl: false
       });
 
-      // Satellite Imagery (Esri World Imagery)
+      // Satellite Imagery (Esri World Imagery) with performance buffering
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 18
+        maxZoom: 18,
+        keepBuffer: 4,
+        updateWhenIdle: false,
+        updateWhenZooming: false
       }).addTo(map);
 
       // Labels Overlay
       L.tileLayer('https://{s}.basemaps.cartocdn.com/only_labels/{z}/{x}/{y}{r}.png', {
         subdomains: 'abcd',
         maxZoom: 18,
-        opacity: 0.85
+        opacity: 0.85,
+        keepBuffer: 4
       }).addTo(map);
 
       // Custom Glowing Aero Villas Center Marker
@@ -1959,7 +2015,7 @@
         card.setAttribute('data-loc-name', loc.name);
         card.innerHTML = `
           <div class="loc-card-header">
-            <img src="${loc.image}" alt="${loc.name}" class="loc-thumb">
+            <img src="${loc.image}" alt="${loc.name}" class="loc-thumb" loading="lazy" decoding="async">
             <div class="loc-info">
               <div class="loc-name">${loc.name}</div>
               <div class="loc-badge-inline">${loc.distance}</div>
@@ -1970,7 +2026,7 @@
           </div>
           <div class="loc-card-expanded">
             <div class="loc-expanded-inner">
-              <img src="${loc.image}" alt="${loc.name}" class="loc-expanded-img">
+              <img src="${loc.image}" alt="${loc.name}" class="loc-expanded-img" loading="lazy" decoding="async">
               <p class="loc-expanded-desc">${loc.description}</p>
               <div class="loc-expanded-actions">
                 <a href="${loc.googleMapsLink}" target="_blank" class="loc-expanded-maps-btn">
@@ -2049,38 +2105,58 @@
       });
     }
 
-    // FETCH REAL ROAD NETWORK GEOMETRY VIA OSRM API
+    // FETCH REAL ROAD NETWORK GEOMETRY VIA OSRM API WITH EXACT ENDPOINT ANCHORING
     async function fetchRoadRouteGeometry(fromCoords, toCoords) {
       const cacheKey = `${fromCoords[0]},${fromCoords[1]}_${toCoords[0]},${toCoords[1]}`;
       if (routeGeometryCache.has(cacheKey)) {
         return routeGeometryCache.get(cacheKey);
       }
 
+      let routePoints = [];
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2500);
         const url = `https://router.project-osrm.org/route/v1/driving/${fromCoords[1]},${fromCoords[0]};${toCoords[1]},${toCoords[0]}?overview=full&geometries=geojson`;
-        const res = await fetch(url);
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
         const data = await res.json();
 
         if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-          const coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-          routeGeometryCache.set(cacheKey, coords);
-          return coords;
+          routePoints = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
         }
       } catch (e) {
-        console.warn('OSRM routing fetch failed, falling back to direct geometric curve', e);
+        console.warn('OSRM routing fetch timeout/error, using smooth direct curve fallback', e);
       }
 
-      // Fallback: smooth interpolated polyline points
-      const points = [];
-      const steps = 30;
-      for (let i = 0; i <= steps; i++) {
-        const t = i / steps;
-        const lat = fromCoords[0] + (toCoords[0] - fromCoords[0]) * t;
-        const lng = fromCoords[1] + (toCoords[1] - fromCoords[1]) * t;
-        points.push([lat, lng]);
+      if (routePoints.length === 0) {
+        const steps = 30;
+        for (let i = 0; i <= steps; i++) {
+          const t = i / steps;
+          const lat = fromCoords[0] + (toCoords[0] - fromCoords[0]) * t;
+          const lng = fromCoords[1] + (toCoords[1] - fromCoords[1]) * t;
+          routePoints.push([lat, lng]);
+        }
       }
-      routeGeometryCache.set(cacheKey, points);
-      return points;
+
+      // CRITICAL: Anchor endpoints EXACTLY to Aero Villas Hub & Destination Location Pin!
+      if (routePoints.length > 0) {
+        const first = routePoints[0];
+        if (Math.abs(first[0] - fromCoords[0]) > 0.00005 || Math.abs(first[1] - fromCoords[1]) > 0.00005) {
+          routePoints.unshift([fromCoords[0], fromCoords[1]]);
+        } else {
+          routePoints[0] = [fromCoords[0], fromCoords[1]];
+        }
+
+        const last = routePoints[routePoints.length - 1];
+        if (Math.abs(last[0] - toCoords[0]) > 0.00005 || Math.abs(last[1] - toCoords[1]) > 0.00005) {
+          routePoints.push([toCoords[0], toCoords[1]]);
+        } else {
+          routePoints[routePoints.length - 1] = [toCoords[0], toCoords[1]];
+        }
+      }
+
+      routeGeometryCache.set(cacheKey, routePoints);
+      return routePoints;
     }
 
     // CINEMATIC VFX ROUTE REVEAL CONTROLLER (FOCUS MODE STRICT ENFORCEMENT)
@@ -2190,10 +2266,7 @@
       pulseDot.setAttribute('filter', 'drop-shadow(0 0 8px #F3E5AB) drop-shadow(0 0 16px #D4AF37)');
       svgContainer.appendChild(pulseDot);
 
-      const particleGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-      svgContainer.appendChild(particleGroup);
-
-      const animDuration = 1800;
+      const animDuration = 1400;
       const startTime = performance.now();
 
       function animateVfxStep(now) {
@@ -2210,58 +2283,21 @@
         pulseDot.setAttribute('cx', pt.x);
         pulseDot.setAttribute('cy', pt.y);
 
-        if (progress < 0.98 && Math.random() < 0.45) {
-          spawnLightParticle(particleGroup, pt.x, pt.y);
-        }
-
         if (progress < 1) {
           currentVfxAnimationId = requestAnimationFrame(animateVfxStep);
         } else {
           if (pulseDot.parentNode) pulseDot.parentNode.removeChild(pulseDot);
           triggerDestinationReveal(targetLoc, markerObj);
-          startStationaryEnergyFlow(corePath, pathLength);
+          startStationaryEnergyFlow(corePath);
         }
       }
 
       currentVfxAnimationId = requestAnimationFrame(animateVfxStep);
     }
 
-    function spawnLightParticle(group, x, y) {
-      const p = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      const r = 1.5 + Math.random() * 2.5;
-      const offsetX = (Math.random() - 0.5) * 8;
-      const offsetY = (Math.random() - 0.5) * 8;
-
-      p.setAttribute('cx', x + offsetX);
-      p.setAttribute('cy', y + offsetY);
-      p.setAttribute('r', r);
-      p.setAttribute('fill', Math.random() > 0.5 ? '#FFF4CE' : '#D4AF37');
-      p.setAttribute('opacity', '0.9');
-
-      group.appendChild(p);
-
-      let fadeTime = 0;
-      function fade() {
-        fadeTime += 0.05;
-        p.setAttribute('opacity', (0.9 - fadeTime).toString());
-        if (fadeTime < 0.9) {
-          requestAnimationFrame(fade);
-        } else {
-          if (p.parentNode) p.parentNode.removeChild(p);
-        }
-      }
-      requestAnimationFrame(fade);
-    }
-
-    function startStationaryEnergyFlow(pathEl, totalLen) {
-      pathEl.style.strokeDasharray = '12 12';
-      let offset = 0;
-      function loopFlow() {
-        offset = (offset - 0.6) % 24;
-        pathEl.style.strokeDashoffset = offset;
-        currentParticleAnimationId = requestAnimationFrame(loopFlow);
-      }
-      loopFlow();
+    function startStationaryEnergyFlow(pathEl) {
+      if (!pathEl) return;
+      pathEl.classList.add('vfx-animated-dash');
     }
 
     // DESTINATION REVEAL RIPPLE & MARKER EFFECT
