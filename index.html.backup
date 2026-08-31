@@ -676,19 +676,12 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      flex: 1;
     }
 
     .panel-close {
       cursor: pointer;
       color: rgba(255, 255, 255, 0.6);
       transition: color 0.2s;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
     }
 
     .panel-close:hover {
@@ -768,8 +761,8 @@
       background: transparent;
       border: none;
       color: rgba(255, 255, 255, 0.6);
-      width: 44px;
-      height: 44px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -1258,8 +1251,8 @@
       display: none;
       cursor: pointer;
       color: rgba(255, 255, 255, 0.7);
-      width: 44px;
-      height: 44px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
       align-items: center;
       justify-content: center;
@@ -1320,8 +1313,8 @@
       .nav-item {
         padding: 10px;
         border-radius: 50%;
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
       }
 
       .nav-item .nav-label {
@@ -2201,7 +2194,6 @@
       activeSelectedLocation = null; // Reset to overview for this category
 
       const bounds = L.latLngBounds([AERO_VILLAS_COORDS]);
-      const fragment = document.createDocumentFragment();
 
       catData.items.forEach((loc, index) => {
         bounds.extend(loc.coords);
@@ -2314,10 +2306,8 @@
           returnToOverview();
         });
 
-        fragment.appendChild(card);
+        locationListContainer.appendChild(card);
       });
-      
-      locationListContainer.appendChild(fragment);
 
       currentCategoryBounds = bounds;
       categoryCardPanel.classList.add('open');
