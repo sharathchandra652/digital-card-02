@@ -1314,67 +1314,84 @@
         font-size: 1.2rem;
       }
 
-      /* ── Header Home Button ── */
+      /* ── Header Home Button — icon-only compact circle on mobile ── */
       .map-header-bar {
         left: 12px;
         top: calc(12px + env(safe-area-inset-top, 0px));
-        padding: 7px 13px;
-        font-size: 0.72rem;
-        border-radius: 10px;
+        padding: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
       }
 
-      /* ── Bottom Floating Navigation Bar ── */
+      /* Hide the text logo, show a home icon instead */
+      .map-header-logo {
+        display: none;
+      }
+
+      .map-header-bar::after {
+        content: '\f015'; /* fa-house */
+        font-family: 'Font Awesome 6 Free';
+        font-weight: 900;
+        font-size: 1rem;
+        color: var(--gold-light);
+      }
+
+      /* ── Bottom Floating Navigation Bar — icons only ── */
       .nav-panel {
         position: fixed;
         top: auto;
-        bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+        bottom: calc(10px + env(safe-area-inset-bottom, 0px));
         left: 50%;
         transform: translateX(-50%);
         flex-direction: row;
         align-items: center;
-        padding: 8px 12px;
-        border-radius: 36px;
-        gap: 4px;
-        background: rgba(13, 10, 28, 0.96);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid var(--glass-border);
-        box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.8), 0 8px 30px rgba(0, 0, 0, 0.6);
+        padding: 10px 14px;
+        border-radius: 50px;
+        gap: 6px;
+        background: rgba(10, 8, 22, 0.97);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        border: 1px solid rgba(212, 175, 55, 0.25);
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.85), 0 0 0 0.5px rgba(212, 175, 55, 0.15);
         z-index: 120;
-        max-width: calc(100vw - 24px);
+        max-width: calc(100vw - 20px);
         overflow: visible;
       }
 
-      /* Each nav item becomes a vertical column: icon + label */
+      /* Icon-only circular nav buttons */
       .nav-item {
-        width: auto;
-        min-width: 52px;
-        height: auto;
-        border-radius: 14px;
-        padding: 7px 10px 5px;
+        width: 46px;
+        height: 46px;
+        min-width: 46px;
+        border-radius: 50%;
+        padding: 0;
         flex-direction: column;
-        gap: 4px;
-        background: transparent;
+        gap: 0;
+        background: rgba(255, 255, 255, 0.04);
         border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
       }
 
       .nav-item i {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
       }
 
       .nav-item.active {
-        background: rgba(212, 175, 55, 0.16);
-        border-color: rgba(212, 175, 55, 0.45);
+        background: rgba(212, 175, 55, 0.2);
+        border-color: rgba(212, 175, 55, 0.6);
+        box-shadow: 0 0 14px rgba(212, 175, 55, 0.3);
       }
 
-      /* Hide desktop tooltip */
-      .nav-item .nav-label {
-        display: none !important;
-      }
-
-      /* Show bottom label */
+      /* Hide all labels on mobile */
+      .nav-item .nav-label,
       .nav-item .nav-label-bottom {
-        display: block;
+        display: none !important;
       }
 
       /* ── Bottom Sheet Presentation Panel ── */
@@ -1386,33 +1403,40 @@
         right: 0;
         width: 100vw;
         height: auto;
-        /* Collapsed: 44% of viewport, minus nav bar height (≈80px) */
-        max-height: calc(44dvh - 0px);
+        /* Sheet sits OVER the nav bar — nav bar is above the sheet */
+        max-height: 52vh;
         z-index: 110;
         border-radius: 22px 22px 0 0;
-        border: 1px solid var(--glass-border);
+        border: 1px solid rgba(212, 175, 55, 0.2);
         border-bottom: none;
-        /* Padding bottom clears the bottom nav bar */
-        padding: 8px 14px calc(88px + env(safe-area-inset-bottom, 0px)) 14px;
+        /* Internal padding: top drag handle, sides, bottom safe area */
+        padding: 6px 12px calc(16px + env(safe-area-inset-bottom, 0px)) 12px;
         transform: translateY(100%);
-        transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex;
         flex-direction: column;
         gap: 6px;
-        box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.9);
+        box-shadow: 0 -6px 40px rgba(0, 0, 0, 0.92);
         overflow: hidden;
-        background: rgba(13, 10, 28, 0.97);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
+        background: rgba(10, 8, 22, 0.98);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+      }
+
+      /* Nav bar floats ABOVE the bottom sheet by raising its z-index */
+      /* Sheet open: nav pill needs to float above sheet surface */
+      .category-card-panel.open ~ * .nav-panel,
+      .map-interface-screen .nav-panel {
+        z-index: 125;
       }
 
       .category-card-panel.open {
         transform: translateY(0);
       }
 
-      /* Expanded: 82% of viewport */
+      /* Expanded state — takes up more but leaves nav bar and top visible */
       .category-card-panel.sheet-expanded {
-        max-height: 82dvh;
+        max-height: 80vh;
       }
 
       .category-card-panel.sheet-expanded .panel-expand-toggle i {
@@ -1446,7 +1470,7 @@
         letter-spacing: 1.5px;
       }
 
-      /* Horizontal card carousel */
+      /* Horizontal card carousel — no extra bottom padding needed */
       .location-list {
         display: flex;
         flex-direction: row;
@@ -1458,8 +1482,7 @@
         touch-action: pan-x;
         overscroll-behavior-x: contain;
         scroll-snap-type: x mandatory;
-        padding: 4px 4px 4px 4px;
-        /* Scrollbar hidden */
+        padding: 4px 2px;
         scrollbar-width: none;
         -ms-overflow-style: none;
       }
@@ -1469,21 +1492,21 @@
       }
 
       .location-item-card {
-        width: 80vw;
-        max-width: 320px;
+        width: 78vw;
+        max-width: 310px;
         flex-shrink: 0;
         scroll-snap-align: center;
         border-radius: 16px;
         transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
       }
 
-      /* Single focused card mode */
+      /* Single focused card — vertical scroll, no extra padding */
       .location-list.has-focused-card {
         display: block !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         touch-action: pan-y !important;
-        padding-bottom: 8px;
+        padding: 0;
       }
 
       .location-list.has-focused-card .location-item-card:not(.expanded) {
@@ -1578,40 +1601,34 @@
     /* ── Small phones (≤480px) ── */
     @media (max-width: 480px) {
       .nav-panel {
-        padding: 6px 8px;
-        gap: 2px;
-        border-radius: 28px;
+        padding: 8px 10px;
+        gap: 4px;
       }
 
       .nav-item {
-        min-width: 46px;
-        padding: 6px 7px 4px;
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
       }
 
       .nav-item i {
-        font-size: 1.05rem;
-      }
-
-      .nav-item .nav-label-bottom {
-        font-size: 0.52rem;
-        max-width: 48px;
+        font-size: 1rem;
       }
 
       .pin-card-box {
-        max-width: 115px;
-        font-size: 0.62rem;
-        padding: 4px 8px;
+        max-width: 105px;
+        font-size: 0.6rem;
+        padding: 4px 7px;
         border-radius: 10px;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.4px;
       }
 
-      .map-header-bar {
-        padding: 6px 11px;
-        font-size: 0.68rem;
+      .category-card-panel {
+        max-height: 50vh;
       }
 
       .location-item-card {
-        width: 88vw;
+        width: 86vw;
       }
     }
 
@@ -2367,25 +2384,30 @@
       });
     });
 
-    function getResponsiveMapPadding() {
+    function getResponsiveMapPadding(sheetIsOpen) {
       const isMobile = window.innerWidth < 769;
       const isTablet = window.innerWidth >= 769 && window.innerWidth <= 1024;
+      const vh = window.innerHeight;
+      // Nav bar height on mobile ≈ 80px (pill bar)
+      const NAV_H = 80;
 
       if (isMobile) {
-        // On phones: nav bar ≈ 74px, bottom sheet ≈ 44dvh when collapsed
-        // When panel is open, account for collapsed bottom sheet (~44% of height)
-        const panelIsOpen = categoryCardPanel.classList.contains('open');
-        const bottomOffset = panelIsOpen
-          ? Math.round(window.innerHeight * 0.46) + 20
-          : 90; // just nav bar
+        if (sheetIsOpen) {
+          // Sheet collapsed = 52vh from bottom, plus a little gap for pins above it
+          const sheetH = Math.round(vh * 0.52) + 20;
+          return {
+            paddingBottomRight: [14, sheetH],
+            paddingTopLeft: [58, 58]
+          };
+        }
+        // No sheet: just clear the nav bar
         return {
-          paddingBottomRight: [16, bottomOffset],
-          paddingTopLeft: [60, 60]
+          paddingBottomRight: [14, NAV_H + 20],
+          paddingTopLeft: [58, 58]
         };
       }
 
       if (isTablet) {
-        // iPad: side panel on right, nav on left
         return {
           paddingBottomRight: [360, 60],
           paddingTopLeft: [80, 60]
@@ -2532,8 +2554,17 @@
       categoryCardPanel.classList.add('open');
       updateMarkersVisibility();
 
-      const paddingObj = getResponsiveMapPadding();
-      map.flyToBounds(bounds, { paddingBottomRight: paddingObj.paddingBottomRight, paddingTopLeft: paddingObj.paddingTopLeft, duration: 1.8 });
+      // Let the browser paint the panel open transition, then invalidate map size
+      // so Leaflet knows the usable map area has changed, then fit all pins
+      setTimeout(() => {
+        if (map) map.invalidateSize({ animate: false });
+        const paddingObj = getResponsiveMapPadding(true);
+        map.flyToBounds(bounds, {
+          paddingBottomRight: paddingObj.paddingBottomRight,
+          paddingTopLeft: paddingObj.paddingTopLeft,
+          duration: 1.6
+        });
+      }, 50);
     }
 
     // UPDATE MARKERS & LABELS VISIBILITY ACCORDING TO FOCUS MODE
@@ -2652,7 +2683,8 @@
 
       mapInterfaceScreen.classList.add('camera-moving');
 
-      const paddingObj = getResponsiveMapPadding();
+      if (map) map.invalidateSize({ animate: false });
+      const paddingObj = getResponsiveMapPadding(true); // panel is open when a location is selected
 
       if (prefersReducedMotion) {
         map.fitBounds(focusBounds, { paddingBottomRight: paddingObj.paddingBottomRight, paddingTopLeft: paddingObj.paddingTopLeft });
@@ -2865,7 +2897,8 @@
       clearRouteVisualsOnly();
       updateMarkersVisibility();
 
-      const paddingObj = getResponsiveMapPadding();
+      // Panel is still open (category view) so use sheet-open padding
+      const paddingObj = getResponsiveMapPadding(true);
 
       // Fit map back to last category view where user clicked, else to Aero Villas
       if (currentCategoryBounds) {
