@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>AERO VILLAS - Premium Location Highlights Presentation</title>
 
   <!-- Leaflet CSS & JS for smooth interactive custom styled satellite map -->
@@ -605,7 +605,7 @@
       transform: scale(1.15);
     }
 
-    /* HOVER TOOLTIP / LABEL REVEAL */
+    /* HOVER TOOLTIP / LABEL REVEAL (desktop only) */
     .nav-item .nav-label {
       position: absolute;
       left: 70px;
@@ -628,6 +628,28 @@
     .nav-item:hover .nav-label {
       opacity: 1;
       transform: translateX(0);
+    }
+
+    /* Mobile bottom nav label (visible always) */
+    .nav-item .nav-label-bottom {
+      display: none;
+      font-size: 0.58rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: rgba(255, 255, 255, 0.65);
+      text-align: center;
+      line-height: 1;
+      white-space: nowrap;
+      max-width: 56px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      pointer-events: none;
+      transition: color 0.3s ease;
+    }
+
+    .nav-item.active .nav-label-bottom,
+    .nav-item:hover .nav-label-bottom {
+      color: var(--gold-light);
     }
 
     /* FLOATING CATEGORY DETAIL PANEL (RIGHT SIDE PRESENTATION CARD) */
@@ -1273,8 +1295,11 @@
       background: rgba(212, 175, 55, 0.2);
     }
 
-    /* RESPONSIVE DESIGN FOR PHONES & TABLETS (<= 1024px) */
+    /* ============================================================
+       RESPONSIVE DESIGN — PHONES & TABLETS (<= 1024px)
+       ============================================================ */
     @media (max-width: 1024px) {
+
       .brand-title {
         font-size: 2rem;
         letter-spacing: 6px;
@@ -1289,46 +1314,70 @@
         font-size: 1.2rem;
       }
 
-      /* Compact Header Logo Overlay */
+      /* ── Header Home Button ── */
       .map-header-bar {
-        left: 14px;
-        top: calc(14px + var(--safe-top, 0px));
-        padding: 8px 14px;
-        font-size: 0.75rem;
+        left: 12px;
+        top: calc(12px + env(safe-area-inset-top, 0px));
+        padding: 7px 13px;
+        font-size: 0.72rem;
+        border-radius: 10px;
       }
 
-      /* Floating Horizontal Category Navigation Bar */
+      /* ── Bottom Floating Navigation Bar ── */
       .nav-panel {
+        position: fixed;
         top: auto;
-        bottom: calc(14px + var(--safe-bottom, 0px));
+        bottom: calc(8px + env(safe-area-inset-bottom, 0px));
         left: 50%;
         transform: translateX(-50%);
         flex-direction: row;
-        padding: 6px 12px;
-        border-radius: 30px;
-        gap: 6px;
-        background: rgba(18, 14, 34, 0.92);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 36px;
+        gap: 4px;
+        background: rgba(13, 10, 28, 0.96);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
         border: 1px solid var(--glass-border);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.75);
+        box-shadow: 0 -4px 40px rgba(0, 0, 0, 0.8), 0 8px 30px rgba(0, 0, 0, 0.6);
         z-index: 120;
-        max-width: calc(100vw - 28px);
-        overflow-x: auto;
+        max-width: calc(100vw - 24px);
+        overflow: visible;
       }
 
+      /* Each nav item becomes a vertical column: icon + label */
       .nav-item {
-        padding: 10px;
-        border-radius: 50%;
-        width: 44px;
-        height: 44px;
+        width: auto;
+        min-width: 52px;
+        height: auto;
+        border-radius: 14px;
+        padding: 7px 10px 5px;
+        flex-direction: column;
+        gap: 4px;
+        background: transparent;
+        border: 1px solid transparent;
       }
 
+      .nav-item i {
+        font-size: 1.15rem;
+      }
+
+      .nav-item.active {
+        background: rgba(212, 175, 55, 0.16);
+        border-color: rgba(212, 175, 55, 0.45);
+      }
+
+      /* Hide desktop tooltip */
       .nav-item .nav-label {
-        display: none;
+        display: none !important;
       }
 
-      /* Mobile Bottom Sheet Presentation Panel */
+      /* Show bottom label */
+      .nav-item .nav-label-bottom {
+        display: block;
+      }
+
+      /* ── Bottom Sheet Presentation Panel ── */
       .category-card-panel {
         position: fixed;
         top: auto;
@@ -1337,41 +1386,47 @@
         right: 0;
         width: 100vw;
         height: auto;
-        max-height: calc(48dvh + var(--safe-bottom, 0px));
+        /* Collapsed: 44% of viewport, minus nav bar height (≈80px) */
+        max-height: calc(44dvh - 0px);
         z-index: 110;
-        border-radius: 24px 24px 0 0;
+        border-radius: 22px 22px 0 0;
         border: 1px solid var(--glass-border);
         border-bottom: none;
-        padding: 10px 14px calc(14px + var(--safe-bottom, 0px)) 14px;
+        /* Padding bottom clears the bottom nav bar */
+        padding: 8px 14px calc(88px + env(safe-area-inset-bottom, 0px)) 14px;
         transform: translateY(100%);
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1), max-height 0.42s cubic-bezier(0.16, 1, 0.3, 1);
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85);
+        gap: 6px;
+        box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.9);
         overflow: hidden;
+        background: rgba(13, 10, 28, 0.97);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
       }
 
       .category-card-panel.open {
         transform: translateY(0);
       }
 
+      /* Expanded: 82% of viewport */
       .category-card-panel.sheet-expanded {
-        max-height: calc(85dvh + var(--safe-bottom, 0px));
+        max-height: 82dvh;
       }
 
       .category-card-panel.sheet-expanded .panel-expand-toggle i {
         transform: rotate(180deg);
       }
 
-      /* Bottom Sheet Drag Handle */
+      /* Drag Handle */
       .sheet-drag-handle {
         display: block;
-        width: 40px;
+        width: 44px;
         height: 5px;
-        background: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.35);
         border-radius: 3px;
-        margin: 0 auto 4px auto;
+        margin: 0 auto 6px auto;
         cursor: grab;
         flex-shrink: 0;
       }
@@ -1381,21 +1436,21 @@
       }
 
       .panel-header {
-        padding-bottom: 6px;
+        padding-bottom: 8px;
         margin-bottom: 2px;
         flex-shrink: 0;
       }
 
       .panel-title {
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         letter-spacing: 1.5px;
       }
 
-      /* Mobile Main Selection View: Horizontal Peek Card Carousel */
+      /* Horizontal card carousel */
       .location-list {
         display: flex;
         flex-direction: row;
-        gap: 12px;
+        gap: 10px;
         flex: 1;
         overflow-x: auto;
         overflow-y: hidden;
@@ -1403,25 +1458,32 @@
         touch-action: pan-x;
         overscroll-behavior-x: contain;
         scroll-snap-type: x mandatory;
-        padding: 4px 4px calc(64px + var(--safe-bottom, 0px)) 4px;
+        padding: 4px 4px 4px 4px;
+        /* Scrollbar hidden */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .location-list::-webkit-scrollbar {
+        display: none;
       }
 
       .location-item-card {
-        width: 85vw;
-        max-width: 360px;
+        width: 80vw;
+        max-width: 320px;
         flex-shrink: 0;
-        scroll-snap-align: start;
+        scroll-snap-align: center;
         border-radius: 16px;
         transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
       }
 
-      /* SINGLE FOCUSED CARD MODE (ON MOBILE / TABLET) */
+      /* Single focused card mode */
       .location-list.has-focused-card {
         display: block !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         touch-action: pan-y !important;
-        padding-bottom: calc(76px + var(--safe-bottom, 0px));
+        padding-bottom: 8px;
       }
 
       .location-list.has-focused-card .location-item-card:not(.expanded) {
@@ -1442,7 +1504,7 @@
       }
 
       .loc-name {
-        font-size: 0.88rem;
+        font-size: 0.9rem;
         font-weight: 700;
         line-height: 1.25;
         white-space: normal;
@@ -1456,7 +1518,7 @@
       }
 
       .location-item-card.expanded .loc-card-expanded {
-        max-height: 420px;
+        max-height: 440px;
       }
 
       .loc-expanded-inner {
@@ -1465,7 +1527,7 @@
       }
 
       .loc-expanded-img {
-        height: 135px;
+        height: 120px;
       }
 
       .loc-expanded-desc {
@@ -1473,52 +1535,176 @@
         line-height: 1.45;
       }
 
-      /* Mobile Map Pin Box Sizing */
+      /* Map pin: smaller on mobile */
       .pin-card-box {
-        max-width: 170px;
-        font-size: 0.72rem;
-        padding: 6px 12px;
-        border-radius: 14px;
-        letter-spacing: 1px;
+        max-width: 140px;
+        font-size: 0.68rem;
+        padding: 5px 10px;
+        border-radius: 12px;
+        letter-spacing: 0.8px;
+        line-height: 1.2;
       }
 
-      /* Compact Reset View Button for Mobile Ratios */
+      /* Reset View Button — sits above nav bar */
       .reset-view-btn {
         position: fixed;
-        left: 14px;
-        bottom: calc(72px + var(--safe-bottom, 0px));
-        z-index: 105;
+        left: 12px;
+        bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+        z-index: 115;
         padding: 8px 14px;
-        font-size: 0.76rem;
+        font-size: 0.74rem;
         border-radius: 20px;
         gap: 6px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
       }
 
-      /* Compact Map Zoom Controls for Mobile Ratios */
+      /* Zoom Controls — sits above nav bar */
       .map-controls {
         position: fixed;
-        right: 14px;
-        bottom: calc(72px + var(--safe-bottom, 0px));
-        z-index: 105;
+        right: 12px;
+        bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+        z-index: 115;
         gap: 6px;
       }
 
       .map-btn {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         border-radius: 10px;
         font-size: 0.85rem;
       }
     }
 
-    /* TABLET RESPONSIVE BREAKPOINT (769px - 1024px) */
+    /* ── Small phones (≤480px) ── */
+    @media (max-width: 480px) {
+      .nav-panel {
+        padding: 6px 8px;
+        gap: 2px;
+        border-radius: 28px;
+      }
+
+      .nav-item {
+        min-width: 46px;
+        padding: 6px 7px 4px;
+      }
+
+      .nav-item i {
+        font-size: 1.05rem;
+      }
+
+      .nav-item .nav-label-bottom {
+        font-size: 0.52rem;
+        max-width: 48px;
+      }
+
+      .pin-card-box {
+        max-width: 115px;
+        font-size: 0.62rem;
+        padding: 4px 8px;
+        border-radius: 10px;
+        letter-spacing: 0.5px;
+      }
+
+      .map-header-bar {
+        padding: 6px 11px;
+        font-size: 0.68rem;
+      }
+
+      .location-item-card {
+        width: 88vw;
+      }
+    }
+
+    /* ── iPad / Large Tablet (769px – 1024px): side panel, NOT bottom sheet ── */
     @media (min-width: 769px) and (max-width: 1024px) {
+      /* Revert to side panel for iPad */
       .category-card-panel {
-        width: 360px;
+        position: absolute;
         top: 90px;
-        right: 20px;
-        max-height: calc(100vh - 120px);
+        right: 16px;
+        bottom: auto;
+        left: auto;
+        width: 340px;
+        max-width: 340px;
+        max-height: calc(100dvh - 120px);
+        border-radius: 20px;
+        border: 1px solid var(--glass-border);
+        padding: 16px 14px;
+        transform: translateX(380px);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .category-card-panel.open {
+        transform: translateX(0);
+      }
+
+      .sheet-drag-handle {
+        display: none;
+      }
+
+      .panel-expand-toggle {
+        display: none;
+      }
+
+      /* iPad: keep nav panel on left side */
+      .nav-panel {
+        position: absolute;
+        top: 54%;
+        left: 16px;
+        bottom: auto;
+        transform: translateY(-50%);
+        flex-direction: column;
+        padding: 14px 10px;
+        border-radius: 22px;
+        gap: 10px;
+        max-width: none;
+        overflow: visible;
+      }
+
+      .nav-item {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        flex-direction: row;
+        padding: 0;
+        border-radius: 14px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .nav-item .nav-label-bottom {
+        display: none;
+      }
+
+      /* iPad reset/zoom buttons stay at bottom-right corner */
+      .reset-view-btn {
+        position: absolute;
+        left: 100px;
+        bottom: 24px;
+        z-index: 100;
+      }
+
+      .map-controls {
+        position: absolute;
+        right: 16px;
+        bottom: 24px;
+        z-index: 100;
+      }
+
+      .location-list {
+        flex-direction: column;
+        overflow-x: hidden;
+        overflow-y: auto;
+        scroll-snap-type: none;
+        padding: 0;
+      }
+
+      .location-item-card {
+        width: 100%;
+        max-width: 100%;
+        scroll-snap-align: none;
       }
     }
 
@@ -1760,31 +1946,37 @@
       <div class="map-header-logo">AERO<br>VILLAS</div>
     </div>
 
-    <!-- LEFT SIDE VERTICAL NAVIGATION PANEL -->
+    <!-- BOTTOM NAVIGATION BAR (mobile) / LEFT SIDE PANEL (desktop) -->
     <div class="nav-panel">
       <div class="nav-item" data-category="schools">
         <i class="fa-solid fa-graduation-cap"></i>
         <span class="nav-label">Education</span>
+        <span class="nav-label-bottom">Education</span>
       </div>
       <div class="nav-item" data-category="parks">
         <i class="fa-solid fa-tree"></i>
-        <span class="nav-label">Parks & Nature</span>
+        <span class="nav-label">Parks &amp; Nature</span>
+        <span class="nav-label-bottom">Parks</span>
       </div>
       <div class="nav-item" data-category="connectivity">
         <i class="fa-solid fa-plane-departure"></i>
         <span class="nav-label">Connectivity</span>
+        <span class="nav-label-bottom">Transit</span>
       </div>
       <div class="nav-item" data-category="hospitals">
         <i class="fa-solid fa-hospital"></i>
         <span class="nav-label">Healthcare</span>
+        <span class="nav-label-bottom">Health</span>
       </div>
       <div class="nav-item" data-category="entertainment">
         <i class="fa-solid fa-film"></i>
-        <span class="nav-label">Shopping & Entertainment</span>
+        <span class="nav-label">Shopping &amp; Entertainment</span>
+        <span class="nav-label-bottom">Shopping</span>
       </div>
       <div class="nav-item" data-category="highcourt">
         <i class="fa-solid fa-building-columns"></i>
-        <span class="nav-label">Govt & Future Development</span>
+        <span class="nav-label">Govt &amp; Future Development</span>
+        <span class="nav-label-bottom">Future</span>
       </div>
     </div>
 
@@ -2176,16 +2368,33 @@
     });
 
     function getResponsiveMapPadding() {
-      const isMobileOrTablet = window.innerWidth <= 1024;
-      if (isMobileOrTablet) {
-        const bottomOffset = Math.round(window.innerHeight * 0.22);
+      const isMobile = window.innerWidth < 769;
+      const isTablet = window.innerWidth >= 769 && window.innerWidth <= 1024;
+
+      if (isMobile) {
+        // On phones: nav bar ≈ 74px, bottom sheet ≈ 44dvh when collapsed
+        // When panel is open, account for collapsed bottom sheet (~44% of height)
+        const panelIsOpen = categoryCardPanel.classList.contains('open');
+        const bottomOffset = panelIsOpen
+          ? Math.round(window.innerHeight * 0.46) + 20
+          : 90; // just nav bar
         return {
-          paddingBottomRight: [20, bottomOffset],
-          paddingTopLeft: [20, 50]
+          paddingBottomRight: [16, bottomOffset],
+          paddingTopLeft: [60, 60]
         };
       }
+
+      if (isTablet) {
+        // iPad: side panel on right, nav on left
+        return {
+          paddingBottomRight: [360, 60],
+          paddingTopLeft: [80, 60]
+        };
+      }
+
+      // Desktop
       return {
-        paddingBottomRight: [440, 80],
+        paddingBottomRight: [450, 80],
         paddingTopLeft: [100, 70]
       };
     }
