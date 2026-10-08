@@ -14361,17 +14361,12 @@
         keepBuffer: 4,
         updateWhenIdle: false,
         updateWhenZooming: false,
-        attribution: 'Tiles &copy; Esri'
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
       }).addTo(map);
 
-      // Labels Overlay with attribution
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/only_labels/{z}/{x}/{y}{r}.png', {
-        subdomains: 'abcd',
-        maxZoom: 18,
-        opacity: 0.85,
-        keepBuffer: 4,
-        attribution: '&copy; CARTO, &copy; OpenStreetMap contributors'
-      }).addTo(map);
+      // Key-less Esri Overlays (Transportation and Boundaries/Places)
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, opacity: 0.6, keepBuffer: 4 }).addTo(map);
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', { maxZoom: 18, opacity: 0.9, keepBuffer: 4 }).addTo(map);
 
       // Custom Glowing Aero Villas Center Marker with label
       const aeroIcon = L.divIcon({
