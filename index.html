@@ -1170,8 +1170,14 @@
       line-height: 1.25;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
       border: 1px solid rgba(212, 175, 55, 0.4);
-      white-space: normal;
-      max-width: 160px; font-size: 0.75rem; padding: 6px 12px; border-radius: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      width: max-content;
+      max-width: 190px;
+      font-size: 0.72rem;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      overflow-wrap: break-word;
+      text-wrap: balance;
     }
 
     .pin-card-pointer {
@@ -1182,6 +1188,17 @@
       border-top: 14px solid #D4AF37;
       margin-top: -1px;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+
+    /* Pin sits bottom-centre in its Leaflet icon box; the 14px dot's centre
+       is on the box's bottom edge = the icon anchor = the real location */
+    .leaflet-marker-icon.custom-card-pin {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .custom-card-pin .custom-location-pin-card {
+      margin-bottom: -7px;
     }
 
     .pin-card-dot {
@@ -14413,13 +14430,16 @@
         const pt = map.latLngToContainerPoint(latLng);
         const el = m.getElement();
         const pinCard = el ? el.querySelector('.custom-location-pin-card') : null;
+        const box = pinCard ? pinCard.querySelector('.pin-card-box') : null;
+        const halfW = (box ? box.offsetWidth : 180) / 2 + 4;
+        const height = pinCard ? pinCard.offsetHeight : 62;
         return {
           marker: m,
           pinCard: pinCard,
-          x1: pt.x - 90,
-          x2: pt.x + 90,
-          y1: pt.y - 55,
-          y2: pt.y + 15
+          x1: pt.x - halfW,
+          x2: pt.x + halfW,
+          y1: pt.y + 7 - height - 4,
+          y2: pt.y + 7
         };
       });
 
